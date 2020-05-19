@@ -5,23 +5,29 @@ import compression from 'compression';
 import cors from 'cors';
 
 import { UsersModule } from './modules/users/users.module';
+import Auth from './middleware/auth';
 
 class AppModule {
   app: Express;
 
   constructor() {
     this.app = express();
-    this.common();
+    this.commonMiddleware();
+    this.appMiddleware();
     this.modules();
   }
 
-  private common() {
+  private commonMiddleware() {
     this.app.use(morgan('dev'));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(helmet());
     this.app.use(compression());
     this.app.use(cors());
+  }
+
+  private appMiddleware() {
+    this.app.use(Auth.user);
   }
 
   private modules() {

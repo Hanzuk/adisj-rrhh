@@ -16,11 +16,6 @@ export class UsersModule {
   private setRoutes() {
     this.router.post('/', this.controller.create);
     this.router.post('/login', this.controller.login);
-    this.router.get(
-      '/me',
-      Auth.authUser,
-      Auth.authRole('admin'),
-      this.controller.me
-    );
+    this.router.get('/me', Auth.role('admin'), this.controller.me);
   }
 }
