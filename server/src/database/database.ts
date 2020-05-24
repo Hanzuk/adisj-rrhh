@@ -19,7 +19,7 @@ class Database {
         host: 'localhost',
         user: 'root',
         password: 'admin',
-        database: 'test',
+        database: 'adisj',
       });
 
       return p ? resolve(p) : reject(new Error('Error connecting to database'));
