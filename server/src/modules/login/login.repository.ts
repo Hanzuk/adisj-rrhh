@@ -1,18 +1,13 @@
 import DB from '../../database/database';
-import { ILogin } from './login.model';
+import { Login } from './login.interface';
 
 export class LoginRepository {
-  async login(email: string): Promise<ILogin> {
+  async login(email: string): Promise<Login> {
     const result = await DB.query(
       'SELECT id, correo, clave, tipo_empleado FROM empleados WHERE correo = ?',
       [email]
     );
 
-    return {
-      id: result[0].id,
-      email: result[0].correo,
-      password: result[0].clave,
-      rol: result[0].tipo_empleado,
-    };
+    return result[0];
   }
 }

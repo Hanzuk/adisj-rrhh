@@ -5,6 +5,7 @@ import compression from 'compression';
 import cors from 'cors';
 
 import { UsersModule } from './modules/users/users.module';
+import { LoginModule } from './modules/login/login.module';
 import Auth from './middleware/auth';
 
 class AppModule {
@@ -13,7 +14,6 @@ class AppModule {
   constructor() {
     this.app = express();
     this.commonMiddleware();
-    this.appMiddleware();
     this.modules();
   }
 
@@ -26,12 +26,9 @@ class AppModule {
     this.app.use(cors());
   }
 
-  private appMiddleware() {
-    this.app.use(Auth.user);
-  }
-
   private modules() {
-    this.app.use('/v1/users', new UsersModule().router);
+    this.app.use('/v1/login', new LoginModule().router);
+    this.app.use('/v1/users', Auth.user, new UsersModule().router);
   }
 }
 

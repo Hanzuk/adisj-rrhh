@@ -1,7 +1,6 @@
 import { Router } from 'express';
 
 import { LoginController } from './login.controller';
-import Auth from '../../middleware/auth';
 
 export class LoginModule {
   public router: Router;
