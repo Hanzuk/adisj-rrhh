@@ -4,3 +4,10 @@ export enum Rol {
   Chofer = 3,
   Temporal = 4,
 }
+
+export enum Status {
+  Pendiente = 1,
+  Aprobado = 2,
+  Rechazado = 3,
+  Realizado = 4,
+}

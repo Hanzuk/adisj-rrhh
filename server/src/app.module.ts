@@ -4,8 +4,10 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';
 
-import { UsersModule } from './modules/users/users.module';
 import { LoginModule } from './modules/login/login.module';
+import { UsersModule } from './modules/users/users.module';
+import { PermissionsModule } from './modules/permissions/permissions.module';
+import { OvertimeModule } from './modules/overtime/overtime.module';
 import Auth from './middleware/auth';
 
 class AppModule {
@@ -29,6 +31,8 @@ class AppModule {
   private modules() {
     this.app.use('/v1/login', new LoginModule().router);
     this.app.use('/v1/users', Auth.user, new UsersModule().router);
+    this.app.use('/v1/permissions', Auth.user, new PermissionsModule().router);
+    this.app.use('/v1/overtime', Auth.user, new OvertimeModule().router);
   }
 }
 
