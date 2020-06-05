@@ -17,7 +17,7 @@ export class VacationsModule {
   private setRoutes() {
     this.router.get(
       '/',
-      Auth.role(Rol.Admin),
+      Auth.role([Rol.Admin]),
       this.controller.getVacationsRequests
     );
     this.router.post('/', this.controller.createVacationRequest);

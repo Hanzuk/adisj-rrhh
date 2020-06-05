@@ -10,7 +10,7 @@ class AuthMiddleware {
       return res.status(401).send({
         status: 401,
         type: 'UnauthorizedException',
-        message: 'You have to be authorized to do this action',
+        message: 'Tienes que haber iniciado sesión para realizar esta acción',
       });
 
     const token = bearer.split(' ')[1];
@@ -20,21 +20,24 @@ class AuthMiddleware {
         return res.status(401).send({
           status: 401,
           type: 'UnauthorizedException',
-          message: 'You have to be authorized to do this action',
+          message: 'Tienes que haber iniciado sesión para realizar esta acción',
         });
       res.locals.authenticated = decoded;
       next();
     });
   };
 
-  public role(role: Rol) {
+  public role(roles: Rol[]) {
     return (req: Request, res: Response, next: NextFunction) => {
-      if (res.locals.authenticated.tipo_empleado !== role)
+      const { tipo_empleado } = res.locals.authenticated;
+
+      if (roles.indexOf(tipo_empleado) < 0) {
         return res.status(401).send({
           status: 401,
           type: 'UnauthorizedException',
-          message: 'You have to be authorized to do this action',
+          message: 'No tienes el permiso para realizar esta acción',
         });
+      }
 
       next();
     };

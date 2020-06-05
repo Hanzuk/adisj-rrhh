@@ -18,17 +18,21 @@ export class OvertimeModule {
     //Obtiene todas la solicitudes de horas extras
     this.router.get('/', this.controller.findAll);
     //Crea una nueva solicitud
-    this.router.post('/', this.controller.create);
+    this.router.post(
+      '/',
+      Auth.role([Rol.Secretario, Rol.Chofer]),
+      this.controller.create
+    );
     //Acepta, rechaza la solicitud de horas extras
     this.router.put(
       '/admin/:overtimeId',
-      Auth.role(Rol.Admin),
+      Auth.role([Rol.Admin]),
       this.controller.approveOrReject
     );
     this.router.put('/:overtimeId', this.controller.update);
     this.router.delete(
       '/:overtimeId',
-      Auth.role(Rol.Admin),
+      Auth.role([Rol.Admin]),
       this.controller.delete
     );
   }
