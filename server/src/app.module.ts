@@ -11,6 +11,7 @@ import { PermissionsModule } from './modules/permissions/permissions.module';
 import { OvertimeModule } from './modules/overtime/overtime.module';
 import { VacationsModule } from './modules/vacations/vacations.module';
 import { QualityModule } from './modules/quality/quality.module';
+import { ProfilesModule } from './modules/profiles/profiles.module';
 import Auth from './middleware/auth';
 
 class AppModule {
@@ -39,6 +40,7 @@ class AppModule {
     this.app.use('/v1/overtime', Auth.user, new OvertimeModule().router);
     this.app.use('/v1/vacations', Auth.user, new VacationsModule().router);
     this.app.use('/v1/quality', new QualityModule().router);
+    this.app.use('/v1/profile', Auth.user, new ProfilesModule().router);
   }
 }
 
