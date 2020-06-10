@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 
 import { LoginModule } from './modules/login/login.module';
 import { UsersModule } from './modules/users/users.module';
@@ -12,6 +13,7 @@ import { OvertimeModule } from './modules/overtime/overtime.module';
 import { VacationsModule } from './modules/vacations/vacations.module';
 import { QualityModule } from './modules/quality/quality.module';
 import { ProfilesModule } from './modules/profiles/profiles.module';
+import { ReportsModule } from './modules/reports/reports.module';
 import Auth from './middleware/auth';
 
 class AppModule {
@@ -31,6 +33,7 @@ class AppModule {
     this.app.use(compression());
     this.app.use(cors());
     this.app.use(cookieParser());
+    this.app.use(express.static(path.join(__dirname, '../public/downloads')));
   }
 
   private modules() {
@@ -41,6 +44,7 @@ class AppModule {
     this.app.use('/v1/vacations', Auth.user, new VacationsModule().router);
     this.app.use('/v1/quality', new QualityModule().router);
     this.app.use('/v1/profile', Auth.user, new ProfilesModule().router);
+    this.app.use('/v1/reports', new ReportsModule().router);
   }
 }
 
