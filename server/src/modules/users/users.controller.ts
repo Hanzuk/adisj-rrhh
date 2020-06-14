@@ -3,8 +3,6 @@ import { hash } from 'bcryptjs';
 import moment from 'moment';
 
 import { UsersBusiness } from './users.business';
-import { User } from './models/user.model';
-import { TempUser } from './models/temp.model';
 import { IUser } from './models/user.interface';
 import { Rol } from '../../utils/enums';
 import { IPhone } from './models/phone.interface';
@@ -170,81 +168,29 @@ export class UsersController {
   };
 
   public updateEmployee = async (req: Request, res: Response) => {
-    let newUser: User | TempUser;
-
-    if (req.body.tipo_empleado !== 4) {
-      newUser = new User({
-        id: parseInt(req.params.userId),
-        cedula: req.body.cedula,
-        nombre: req.body.nombre,
-        p_apellido: req.body.p_apellido,
-        s_apellido: req.body.s_apellido,
-        fecha_nacimiento: req.body.fecha_nacimiento,
-        correo: req.body.correo,
-        clave: await hash(req.body.clave, 10),
-        tipo_empleado: req.body.tipo_empleado,
-        salario_hora: req.body.salario_hora,
-        jornada: req.body.jornada,
-        telefonos: req.body.telefonos,
-        direccion: req.body.direccion,
-      });
-    } else {
-      newUser = new TempUser({
-        id: parseInt(req.params.userId),
-        cedula: req.body.cedula,
-        nombre: req.body.nombre,
-        p_apellido: req.body.p_apellido,
-        s_apellido: req.body.s_apellido,
-        fecha_nacimiento: req.body.fecha_nacimiento,
-        correo: req.body.correo,
-        clave: await hash(req.body.clave, 10),
-        tipo_empleado: req.body.tipo_empleado,
-        salario_hora: req.body.salario_hora,
-        jornada: req.body.jornada,
-        telefonos: req.body.telefonos,
-        direccion: req.body.direccion,
-        fecha_salida: req.body.fecha_salida,
-        descripcion: req.body.descripcion,
-      });
-    }
-
     try {
-      await this.business.update(newUser);
+      await this.business.update(
+        parseInt(req.params.userId),
+        {
+          cedula: req.body.cedula,
+          nombre: req.body.nombre,
+          p_apellido: req.body.p_apellido,
+          s_apellido: req.body.s_apellido,
+          fecha_nacimiento: req.body.fecha_nacimiento,
+          clave: await hash(req.body.clave, 10),
+        },
+        {
+          salario_hora: req.body.salario_hora,
+          jornada: req.body.jornada,
+        }
+      );
 
       return res.status(200).send({
-        status: 200,
-        type: 'Updated',
-        message: 'Resource has been updated',
+        message: 'Datos del empleado actuailizados',
       });
     } catch (error) {
       return res.status(400).send({
-        status: 400,
-        type: 'BadRequestException',
-        message: 'The resource could not be Updated',
-        error,
-      });
-    }
-  };
-
-  public updateContact = async (req: Request, res: Response) => {
-    try {
-      await this.business.updateContact({
-        id: parseInt(req.params.userId),
-        correo: req.body.correo,
-        telefonos: req.body.telefonos,
-        direccion: req.body.direccion,
-      });
-
-      return res.status(201).send({
-        status: 201,
-        type: 'Updated',
-        message: 'Resource has been Updated',
-      });
-    } catch (error) {
-      return res.status(400).send({
-        status: 400,
-        type: 'BadRequestException',
-        message: 'The resource could not be updated',
+        message: 'No se pudo actualzar los datos del empleado',
         error,
       });
     }

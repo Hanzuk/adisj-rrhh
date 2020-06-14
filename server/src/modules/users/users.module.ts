@@ -16,7 +16,7 @@ export class UsersModule {
 
   private setRoutes() {
     //Obtiene todos los empleados
-    // this.router.get('/', Auth.role([Rol.Admin]), this.controller.findAll);
+    this.router.get('/', Auth.role([Rol.Admin]), this.controller.findEmployees);
 
     //Obtiene un empleado especifico
     this.router.get('/:userId', this.controller.findEmployee);
@@ -32,7 +32,12 @@ export class UsersModule {
     );
 
     //Actualiza la informacion de un empleado
-    // this.router.put('/:userId', Auth.role([Rol.Admin]), this.controller.update);
+    this.router.put(
+      '/:userId',
+      Auth.role([Rol.Admin]),
+      this.controller.updateEmployee
+    );
+
     //Empleado cualquiera actuliza su informacion de contacto
     // this.router.put('/:userId/contact', this.controller.updateContact);
 

@@ -1,14 +1,12 @@
-import DB from '../../../database/database';
-import { User, Phone, Address } from '../models/user.model';
-import { TempUser } from '../models/temp.model';
-import { IUser } from '../models/user.interface';
-import { IAddress } from '../models/address.interface';
-import { IPhone } from '../models/phone.interface';
-import { ISalary } from '../models/salary.interface';
+import DB from '../../database/database';
+import { IUser } from './models/user.interface';
+import { IAddress } from './models/address.interface';
+import { IPhone } from './models/phone.interface';
+import { ISalary } from './models/salary.interface';
 import {
   ITemporaryUser,
   ITemporaryContract,
-} from '../models/temporary.interface';
+} from './models/temporary.interface';
 
 interface IUserInfo extends IUser, ISalary {
   telefonos: IPhone[];
@@ -18,6 +16,7 @@ interface IUserInfo extends IUser, ISalary {
     anteriores: ITemporaryContract[];
   };
 }
+
 export class UsersRepository {
   /**
    * Inserta los datos básicos en la tabla de empleados
@@ -191,77 +190,28 @@ export class UsersRepository {
     return [...result];
   }
 
-  async update(user: User | TempUser): Promise<void> {
-    await DB.query('UPDATE empleados SET ? WHERE id = ?;', [
-      {
-        cedula: user.cedula,
-        nombre: user.nombre,
-        p_apellido: user.p_apellido,
-        s_apellido: user.s_apellido,
-        fecha_nacimiento: user.fecha_nacimiento,
-        correo: user.correo,
-        clave: user.clave,
-        tipo_empleado: user.tipo_empleado,
-      },
-      user.id,
-    ]);
-
-    await DB.query('UPDATE salarios SET ? WHERE id_empleado = ?;', [
-      { salario_hora: user.salario_hora, jornada: user.jornada },
-      user.id,
-    ]);
-
-    await DB.query('UPDATE direcciones SET ? WHERE id_empleado = ?;', [
-      {
-        codigo_provincia: user.direccion.provincia,
-        codigo_canton: user.direccion.canton,
-        codigo_distrito: user.direccion.distrito,
-        direccion: user.direccion.direccion,
-      },
-      user.id,
-    ]);
-
-    for (const phone of user.telefonos) {
-      await DB.query('UPDATE telefonos SET ? WHERE id = ?;', [phone, phone.id]);
+  async updateEmployeeBasic(
+    userId: number,
+    basicData: {
+      cedula: string;
+      nombre: string;
+      p_apellido: string;
+      s_apellido: string;
+      fecha_nacimiento: Date;
+      clave: string;
     }
-
-    if (user instanceof TempUser) {
-      await DB.query(
-        'UPDATE empleados_temporales SET ? WHERE id_empleado = ?;',
-        [
-          {
-            descripcion: user.descripcion,
-          },
-          user.id,
-        ]
-      );
-    }
+  ): Promise<void> {
+    await DB.query('UPDATE empleados SET ? WHERE id = ?;', [basicData, userId]);
   }
 
-  async updateContact(contact: {
-    id: number;
-    correo: string;
-    telefonos: Phone[];
-    direccion: Address;
-  }) {
-    await DB.query('UPDATE empleados SET ? WHERE id = ?;', [
-      { correo: contact.correo },
-      contact.id,
+  async updateEmployeeSalary(
+    userId: number,
+    salaryData: { salario_hora: number; jornada: number }
+  ): Promise<void> {
+    await DB.query('UPDATE salarios SET ? WHERE id_empleado = ?;', [
+      salaryData,
+      userId,
     ]);
-
-    await DB.query('UPDATE direcciones SET ? WHERE id_empleado = ?;', [
-      {
-        codigo_provincia: contact.direccion.provincia,
-        codigo_canton: contact.direccion.canton,
-        codigo_distrito: contact.direccion.distrito,
-        direccion: contact.direccion.direccion,
-      },
-      contact.id,
-    ]);
-
-    for (const phone of contact.telefonos) {
-      await DB.query('UPDATE telefonos SET ? WHERE id = ?;', [phone, phone.id]);
-    }
   }
 
   async rehire(

@@ -1,6 +1,4 @@
-import { UsersRepository } from './repositories/users.repository';
-import { User, Address, Phone } from './models/user.model';
-import { TempUser } from './models/temp.model';
+import { UsersRepository } from './users.repository';
 import { IUser } from './models/user.interface';
 import { IAddress } from './models/address.interface';
 import { IPhone } from './models/phone.interface';
@@ -52,17 +50,26 @@ export class UsersBusiness {
     return await this.repository.getAllEmployees();
   }
 
-  async update(user: User | TempUser) {
-    await this.repository.update(user);
-  }
+  async update(
+    userId: number,
+    basicData: {
+      cedula: string;
+      nombre: string;
+      p_apellido: string;
+      s_apellido: string;
+      fecha_nacimiento: Date;
+      clave: string;
+    },
+    salaryData: { salario_hora: number; jornada: number }
+  ) {
+    const salary = await this.repository.getEmployeeSalary(userId);
 
-  async updateContact(contact: {
-    id: number;
-    correo: string;
-    telefonos: Phone[];
-    direccion: Address;
-  }) {
-    await this.repository.updateContact(contact);
+    await this.repository.updateEmployeeBasic(userId, basicData);
+
+    if (salary.salario_hora > salaryData.salario_hora)
+      throw new Error('Los aumentos al salario no se pueden realizar aqui');
+
+    await this.repository.updateEmployeeSalary(userId, salaryData);
   }
 
   async reHire(
