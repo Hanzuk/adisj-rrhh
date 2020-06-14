@@ -8,11 +8,12 @@ export class PermissionsController {
   ) {}
 
   public create = async (req: Request, res: Response) => {
-    const { id_estado, titulo, descripcion, fecha_salida, horas } = req.body;
+    const { titulo, descripcion, fecha_salida, horas } = req.body;
 
     try {
       await this.business.create({
         id_empleado: res.locals.authenticated.id,
+        id_estado: 1,
         titulo,
         descripcion,
         fecha_salida,
@@ -38,7 +39,7 @@ export class PermissionsController {
     try {
       const permissions = await this.business.findAll();
 
-      if (res.locals.authenticated.id !== Rol.Admin) {
+      if (res.locals.authenticated.tipo_empleado !== Rol.Admin) {
         return res
           .status(200)
           .send(
@@ -62,26 +63,11 @@ export class PermissionsController {
 
   public updateAdmin = async (req: Request, res: Response) => {
     const { permissionId } = req.params;
-    const { id_estado, titulo, descripcion, fecha_salida, horas } = req.body;
+    const { id_estado } = req.body;
 
     try {
-      if (res.locals.authenticated.id === Rol.Admin) {
-        await this.business.onlyAdminUpdate(parseInt(permissionId), {
-          id_estado,
-        });
-        return res.status(200).send({
-          status: 200,
-          type: 'Updated',
-          message: 'Permission has been updated',
-        });
-      }
-
-      await this.business.allUpdate(parseInt(permissionId), {
-        id_estado: 1,
-        titulo,
-        descripcion,
-        fecha_salida,
-        horas,
+      await this.business.onlyAdminUpdate(parseInt(permissionId), {
+        id_estado,
       });
       return res.status(200).send({
         status: 200,
@@ -103,7 +89,7 @@ export class PermissionsController {
     const { titulo, descripcion, fecha_salida, horas } = req.body;
 
     try {
-      if (res.locals.authenticated.id !== Rol.Admin) {
+      if (res.locals.authenticated.tipo_empleado !== Rol.Admin) {
         await this.business.onlyAdminUpdate(parseInt(permissionId), {
           id_estado: 1,
           titulo,
@@ -111,6 +97,7 @@ export class PermissionsController {
           fecha_salida,
           horas,
         });
+
         return res.status(200).send({
           status: 200,
           type: 'Updated',
@@ -136,7 +123,7 @@ export class PermissionsController {
   public delete = async (req: Request, res: Response) => {
     const { permissionId } = req.params;
 
-    if (res.locals.authenticated.id !== Rol.Admin) {
+    if (res.locals.authenticated.tipo_empleado !== Rol.Admin) {
       try {
         await this.business.allUpdate(parseInt(permissionId), {
           solo_admin: true,

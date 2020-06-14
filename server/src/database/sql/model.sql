@@ -1,5 +1,5 @@
+DROP DATABASE IF EXISTS adisj;
 CREATE DATABASE adisj;
-
 USE adisj;
 
 CREATE TABLE tipo_empleados (
@@ -41,7 +41,9 @@ CREATE TABLE contratos_empleados_temporales (
   id_empleado INT NOT NULL,
   fecha_contrato DATETIME NOT NULL,
   fecha_salida DATETIME NOT NULL,
+  dias INT NOT NULL DEFAULT 0,
   descripcion VARCHAR(300) NOT NULL,
+  activo BOOLEAN DEFAULT true NOT NULL,
   CONSTRAINT pk_contratos_empleados_temporales PRIMARY KEY(id),
   CONSTRAINT fk_contratos_empleados_temporales_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id)
 );
@@ -163,6 +165,7 @@ CREATE TABLE vacaciones (
   activo BOOLEAN DEFAULT true NOT NULL,
   fecha_entrada DATETIME NOT NULL,
   fecha_salida DATETIME NOT NULL,
+  cantidad INT NOT NULL,
   CONSTRAINT pk_vacaciones PRIMARY KEY(id),
   CONSTRAINT fk_vacaciones_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id)
 );
@@ -186,28 +189,37 @@ CREATE TABLE salarios (
   CONSTRAINT fk_salarios_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id)
 );
 
+CREATE TABLE tareas (
+  id INT AUTO_INCREMENT NOT NULL,
+  id_empleado INT NOT NULL,
+  titulo VARCHAR(100) NOT NULL,
+  descripcion VARCHAR(300) NOT NULL,
+  activo BOOLEAN DEFAULT true NOT NULL,
+  fecha_asignacion DATETIME DEFAULT NOW() NOT NULL,
+  -- asignacion_chofer TINYINT NOT NULL,
+  CONSTRAINT pk_tareas PRIMARY KEY(id),
+  CONSTRAINT fk_tareas_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id)
+  -- CONSTRAINT fk_tareas_asignacion_chofer FOREIGN KEY(asignacion_chofer) REFERENCES asignaciones_choferes(id)
+);
+
+CREATE TABLE horarios_choferes (
+  id TINYINT AUTO_INCREMENT NOT NULL,
+  hora_entrada DATETIME NOT NULL,
+  hora_salida DATETIME NOT NULL,
+  CONSTRAINT pk_horarios_choferes PRIMARY KEY(id)
+);
+
 CREATE TABLE asignaciones_choferes (
   id TINYINT AUTO_INCREMENT,
   dia VARCHAR(10) NOT NULL,
   tipo_servicio VARCHAR(10) NOT NULL,
   salario_hora DECIMAL(10, 2) NOT NULL,
   vehiculo VARCHAR(50) NOT NULL,
-  hora_entrada DATETIME NOT NULL,
-  hora_salida DATETIME NOT NULL,
-  CONSTRAINT pk_asignaciones_choferes PRIMARY KEY(id)
-);
-
-CREATE TABLE tareas (
-  id INT AUTO_INCREMENT,
-  id_empleado INT NOT NULL,
-  titulo VARCHAR(100) NOT NULL,
-  descripcion VARCHAR(300) NOT NULL,
-  activo BOOLEAN DEFAULT true NOT NULL,
-  fecha_asignacion DATETIME DEFAULT NOW() NOT NULL,
-  asignacion_chofer TINYINT NOT NULL,
-  CONSTRAINT pk_tareas PRIMARY KEY(id),
-  CONSTRAINT fk_tareas_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id),
-  CONSTRAINT fk_tareas_asignacion_chofer FOREIGN KEY(asignacion_chofer) REFERENCES asignaciones_choferes(id)
+  horario TINYINT NOT NULL,
+  id_tarea INT NOT NULL,
+  CONSTRAINT pk_asignaciones_choferes PRIMARY KEY(id),
+  CONSTRAINT fk_asignaciones_choferes_id_tarea FOREIGN KEY(id_tarea) REFERENCES tareas (id),
+  CONSTRAINT fk_asignaciones_choferes_horarios_choferes FOREIGN KEY(horario) REFERENCES horarios_choferes (id)
 );
 
 CREATE TABLE aumentos_salariales (
@@ -238,6 +250,8 @@ CREATE TABLE incapacidades (
   fecha_salida DATE NOT NULL,
   fecha_entrada DATE NOT NULL,
   motivo VARCHAR(200) NOT NULL,
+  cantidad INT DEFAULT 0 NOT NULL,
+  activo BOOLEAN DEFAULT true NOT NULL,
   CONSTRAINT pk_incapacidades PRIMARY KEY(id),
   CONSTRAINT fk_incapacidades_id_empleados FOREIGN KEY(id_empleado) REFERENCES empleados(id)
 );

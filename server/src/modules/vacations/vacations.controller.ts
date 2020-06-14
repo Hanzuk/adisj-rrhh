@@ -17,7 +17,7 @@ export class VacationsController {
       return res.status(200).send({ message: 'Vacaciones solicitadas' });
     } catch (error) {
       return res.status(400).send({
-        message: 'No se puedo crear la solicitud de vacaciones',
+        message: 'No se pudo crear la solicitud de vacaciones',
         error,
       });
     }

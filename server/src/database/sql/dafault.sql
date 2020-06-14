@@ -16,6 +16,12 @@ INSERT INTO estados (estado) VALUES('Aprobado');
 INSERT INTO estados (estado) VALUES('Rechazado');
 INSERT INTO estados (estado) VALUES('Realizado');
 
+-- Inserts para los diferentes horarios de los choferes
+INSERT INTO horarios_choferes (hora_entrada, hora_salida) VALUES('2020-01-01T05:00:00', '2020-01-01T13:00:00');
+INSERT INTO horarios_choferes (hora_entrada, hora_salida) VALUES('2020-01-01T13:00:00', '2020-01-01T22:00:00');
+INSERT INTO horarios_choferes (hora_entrada, hora_salida) VALUES('2020-01-01T05:00:00', '2020-01-01T22:00:00');
+INSERT INTO horarios_choferes (hora_entrada, hora_salida) VALUES('2020-01-01T00:00:00', '2020-01-01T00:00:00');
+
 -- Inserts necesarios para las direcciones
 INSERT INTO provincias (codigo, nombre) VALUES
  (1, 'San José'),

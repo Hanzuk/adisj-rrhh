@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 import { UsersController } from './users.controller';
 import Auth from '../../middleware/auth';
-import { Rol } from 'src/utils/enums';
+import { Rol } from '../../utils/enums';
 
 export class UsersModule {
   public router: Router;
@@ -16,31 +16,38 @@ export class UsersModule {
 
   private setRoutes() {
     //Obtiene todos los empleados
-    this.router.get('/', /*Auth.role(Rol.Admin),*/ this.controller.findAll);
+    // this.router.get('/', Auth.role([Rol.Admin]), this.controller.findAll);
+
     //Obtiene un empleado especifico
-    this.router.get('/:userId', this.controller.findOne);
+    this.router.get('/:userId', this.controller.findEmployee);
 
     // Crea un nuevo empleado
-    this.router.post('/', /*Auth.role(Rol.Admin),*/ this.controller.create);
+    this.router.post('/', Auth.role([Rol.Admin]), this.controller.newUser);
+
+    // Crea un nuevo empleado temporal
+    this.router.post(
+      '/temporary',
+      Auth.role([Rol.Admin]),
+      this.controller.newTemporaryUser
+    );
 
     //Actualiza la informacion de un empleado
-    this.router.put(
-      '/:userId',
-      /*Auth.role(Rol.Admin),*/ this.controller.update
-    );
+    // this.router.put('/:userId', Auth.role([Rol.Admin]), this.controller.update);
     //Empleado cualquiera actuliza su informacion de contacto
-    this.router.put('/:userId/contact', this.controller.updateContact);
+    // this.router.put('/:userId/contact', this.controller.updateContact);
 
     //Re-contrata un empleado temporal
     this.router.put(
       '/:userId/re-hire',
-      /*Auth.role(Rol.Admin),*/ this.controller.reHire
+      Auth.role([Rol.Admin]),
+      this.controller.rehire
     );
 
     //Elimina un empleado especifico
-    this.router.delete(
-      '/:userId',
-      /*Auth.role(Rol.Admin),*/ this.controller.delete
-    );
+    // this.router.delete(
+    //   '/:userId',
+    //   Auth.role([Rol.Admin]),
+    //   this.controller.delete
+    // );
   }
 }

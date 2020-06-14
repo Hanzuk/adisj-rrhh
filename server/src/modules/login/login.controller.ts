@@ -42,7 +42,7 @@ export class LoginController {
       });
 
     const token = sign({ ...credentials }, process.env.JWT_KEY || 'secret', {
-      expiresIn: '1y',
+      expiresIn: '1d',
     });
 
     return res.status(200).send({ token });

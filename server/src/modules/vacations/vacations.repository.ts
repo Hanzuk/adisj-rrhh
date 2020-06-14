@@ -25,7 +25,7 @@ export class VacationsRepository {
 
   public async getRequests() {
     const result = await DB.query(
-      `SELECT v.id, v.fecha_salida, v.fecha_entrada, e.nombre, e.p_apellido, e.s_apellido
+      `SELECT v.id, v.fecha_salida, v.fecha_entrada, v.cantidad, e.nombre, e.p_apellido, e.s_apellido
       FROM vacaciones v
       INNER JOIN empleados e
       ON v.id_empleado = e.id`,

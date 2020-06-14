@@ -20,6 +20,10 @@ export class VacationsModule {
       Auth.role([Rol.Admin]),
       this.controller.getVacationsRequests
     );
-    this.router.post('/', this.controller.createVacationRequest);
+    this.router.post(
+      '/',
+      Auth.role([Rol.Chofer, Rol.Secretario, Rol.Admin]),
+      this.controller.createVacationRequest
+    );
   }
 }

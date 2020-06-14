@@ -25,7 +25,7 @@ export class PermissionsModule {
     );
     //Actuliza un permiso
     this.router.put(
-      '/admin/:permissionId',
+      '/:permissionId/mark-as',
       Auth.role([Rol.Admin]),
       this.controller.updateAdmin
     );

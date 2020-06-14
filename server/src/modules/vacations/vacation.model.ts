@@ -4,6 +4,7 @@ export interface Vacation {
   readonly activo?: boolean;
   readonly fecha_entrada?: Date;
   readonly fecha_salida?: Date;
+  readonly cantidad?: number;
 }
 
 export interface AvailableVacations {

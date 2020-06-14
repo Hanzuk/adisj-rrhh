@@ -11,3 +11,8 @@ export enum Status {
   Rechazado = 3,
   Realizado = 4,
 }
+
+export enum PhoneType {
+  Celular = 1,
+  Casa = 2,
+}

@@ -34,7 +34,7 @@ export class OvertimeController {
     try {
       const overtimeRequests = await this.business.findAll();
 
-      if (res.locals.authenticated.id !== Rol.Admin) {
+      if (res.locals.authenticated.tipo_empleado !== Rol.Admin) {
         return res
           .status(200)
           .send(
