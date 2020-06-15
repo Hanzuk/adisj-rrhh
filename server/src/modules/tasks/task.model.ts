@@ -6,12 +6,3 @@ export interface Task {
   readonly activo?: boolean;
   readonly fecha_asignacion?: Date;
 }
-
-export interface DriverTask {
-  readonly id?: number;
-  readonly dia?: number;
-  readonly tipo_servicio?: string;
-  readonly salario_hora?: number;
-  readonly vehiculo?: string;
-  readonly horario?: number;
-}
