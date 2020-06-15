@@ -72,24 +72,14 @@ export class UsersBusiness {
     await this.repository.updateEmployeeSalary(userId, salaryData);
   }
 
-  async reHire(
-    userId: number,
-    newHireDate: Date = new Date(),
-    newOutDate: Date,
-    newDescription: string
-  ) {
-    const user = await this.repository.getOneEmployee(userId);
+  async reHire(rehireData: ITemporaryContract) {
+    const user = await this.repository.getOneEmployee(rehireData.id_empleado);
 
     if (user.tipo_empleado !== Rol.Temporal) {
       throw new Error();
     }
 
-    await this.repository.rehire(
-      userId,
-      newHireDate,
-      newOutDate,
-      newDescription
-    );
+    await this.repository.rehire(rehireData);
   }
 
   async fire(data: { id_empleado: number; descripcion: string }) {

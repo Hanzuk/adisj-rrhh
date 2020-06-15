@@ -214,38 +214,31 @@ export class UsersRepository {
     ]);
   }
 
-  async rehire(
-    userId: number,
-    newHireDate: Date,
-    newOutDate: Date,
-    newDescription: string
-  ) {
+  async rehire(rehireData: ITemporaryContract) {
     await DB.query('UPDATE empleados SET ? WHERE id = ?;', [
       {
-        fecha_contrato: newHireDate,
+        fecha_contrato: rehireData.fecha_contrato,
       },
-      userId,
+      rehireData.id_empleado,
     ]);
 
     await DB.query('UPDATE empleados_temporales SET ? WHERE id_empleado = ?;', [
       {
-        fecha_salida: newOutDate,
-        descripcion: newDescription,
+        fecha_salida: rehireData.fecha_salida,
+        descripcion: rehireData.descripcion,
       },
-      userId,
+      rehireData.id_empleado,
     ]);
 
     await DB.query(
       'UPDATE contratos_empleados_temporales SET activo = false WHERE id_empleado = ?;',
-      [userId]
+      [rehireData.id_empleado]
     );
 
-    await DB.query('INSERT INTO contratos_empleados_temporales SET ?;', {
-      id_empleado: userId,
-      fecha_contrato: newHireDate,
-      fecha_salida: newOutDate,
-      descripcion: newDescription,
-    });
+    await DB.query(
+      'INSERT INTO contratos_empleados_temporales SET ?;',
+      rehireData
+    );
   }
 
   async fire(data: { id_empleado: number; descripcion: string }) {

@@ -5,15 +5,17 @@ import Times from 'pdfjs/font/Times-Roman';
 import TimesBold from 'pdfjs/font/Times-Bold';
 import fs from 'fs';
 import path from 'path';
-import moment from 'moment';
+import { format } from 'date-fns';
+import es from 'date-fns/locale/es';
 
 export class ReportsBusiness {
   constructor(private business = new ReportsRepository()) {}
 
   public async generateSalaryPDF() {
-    moment.locale('es');
     const filename =
-      `Reporte-salarial-${moment().format('MMMM-YYYY')}`.toUpperCase() + '.pdf';
+      `Reporte-salarial-${format(new Date(), 'MMMM-yyyy', {
+        locale: es,
+      })}`.toUpperCase() + '.pdf';
     const reportPath = path.join(
       __dirname,
       '../../../public/downloads/',
@@ -37,7 +39,7 @@ export class ReportsBusiness {
       .text({ textAlign: 'right' })
       .add('San Juan, Puriscal, San José, Costa Rica')
       .br()
-      .add(moment().format('dddd, MMMM Do YYYY'))
+      .add(format(new Date(), 'd MMMM yyyy', { locale: es }))
       .br()
       .add('Teléfono: 0000-0000', { underline: true, color: 0x00a6fb })
       .br()
@@ -45,7 +47,11 @@ export class ReportsBusiness {
 
     const cell = doc.cell({ paddingBottom: 15 });
     cell.text(
-      `Desglose de montos salariales para el mes de ${moment().format('MMMM')}`,
+      `Desglose de montos salariales para el mes de ${format(
+        new Date(),
+        'MMMM-yyyy',
+        { locale: es }
+      )}`,
       { fontSize: 13 }
     );
 

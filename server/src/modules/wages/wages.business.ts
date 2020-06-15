@@ -1,5 +1,5 @@
 import { WagesRepository } from './wages.repository';
-import moment from 'moment';
+import { getMonth, getYear } from 'date-fns';
 
 export class WagesBusiness {
   constructor(private repository = new WagesRepository()) {}
@@ -13,24 +13,21 @@ export class WagesBusiness {
     incapacidades_mes: number;
     permisos: number;
   }> {
-    const year = moment().year(),
-      month = moment().month() + 1;
-
     const salary = await this.repository.retrieveEmployeeSalary(userId);
     const overtime = await this.repository.retrieveEmployeeOvertime(
       userId,
-      year,
-      month
+      getYear(new Date()),
+      getMonth(new Date())
     );
     const handicaps = await this.repository.retrieveEmployeeHandicaps(
       userId,
-      year,
-      month
+      getYear(new Date()),
+      getMonth(new Date())
     );
     const permissions = await this.repository.retrieveEmployeePermissions(
       userId,
-      year,
-      month
+      getYear(new Date()),
+      getMonth(new Date())
     );
 
     return {
@@ -43,9 +40,10 @@ export class WagesBusiness {
   }
 
   public async getSalaryCalc(userId: number) {
-    const year = moment().year(),
-      month = moment().month() + 1;
-
-    return await this.repository.retrieveSalaryCalc(userId, year, month);
+    return await this.repository.retrieveSalaryCalc(
+      userId,
+      getYear(new Date()),
+      getMonth(new Date())
+    );
   }
 }

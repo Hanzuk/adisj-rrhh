@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import moment from 'moment';
+import { addDays } from 'date-fns';
 import { QualityBusiness } from './quality.business';
 
 export class QualityController {
@@ -21,7 +21,7 @@ export class QualityController {
       });
 
       res.cookie('Limiter', true, {
-        expires: moment().add(14, 'days').toDate(),
+        expires: addDays(new Date(), 13),
       });
 
       return res.status(200).send({ message: 'Tu voto se ha registrado' });

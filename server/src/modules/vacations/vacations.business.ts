@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { differenceInCalendarDays } from 'date-fns';
 
 import { VacationsRepository } from './vacations.repository';
 import { Vacation } from './vacation.model';
@@ -7,10 +7,10 @@ export class VacationsBusiness {
   constructor(private repository = new VacationsRepository()) {}
 
   public async createRequest(request: Vacation) {
-    const outDate = moment(request.fecha_salida);
-    const entryDate = moment(request.fecha_entrada);
-
-    const requestedDays = entryDate.diff(outDate, 'days');
+    const requestedDays = differenceInCalendarDays(
+      new Date(request.fecha_entrada),
+      new Date(request.fecha_salida)
+    );
 
     const availableDays = await this.repository.getAvailableDays(
       request.id_empleado

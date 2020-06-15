@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { hash } from 'bcryptjs';
-import moment from 'moment';
+import { differenceInCalendarDays } from 'date-fns';
 
 import { UsersBusiness } from './users.business';
 import { IUser } from './models/user.interface';
@@ -109,10 +109,7 @@ export class UsersController {
         salaryData
       );
 
-      const contractDate = moment(new Date());
-      const outDate = moment(req.body.fecha_salida);
-
-      const contractedDays = outDate.diff(contractDate, 'days');
+      const fecha_contrato = new Date();
 
       const tempData: ITemporaryUser = {
         id_empleado: userId,
@@ -121,10 +118,13 @@ export class UsersController {
       };
       const contractData: ITemporaryContract = {
         id_empleado: userId,
-        fecha_contrato: new Date(),
+        fecha_contrato,
         fecha_salida: tempData.fecha_salida,
         descripcion: tempData.descripcion,
-        dias: contractedDays,
+        dias: differenceInCalendarDays(
+          new Date(req.body.fecha_salida),
+          fecha_contrato
+        ),
       };
 
       await this.business.saveTemporaryEmployee(tempData, contractData);
@@ -198,14 +198,16 @@ export class UsersController {
 
   public rehire = async (req: Request, res: Response) => {
     const { fecha_salida, descripcion } = req.body;
+    const fecha_contrato = new Date();
 
     try {
-      await this.business.reHire(
-        parseInt(req.params.userId),
-        undefined,
+      await this.business.reHire({
+        id_empleado: parseInt(req.params.userId),
+        fecha_contrato,
         fecha_salida,
-        descripcion
-      );
+        descripcion,
+        dias: differenceInCalendarDays(new Date(fecha_salida), fecha_contrato),
+      });
 
       return res.status(200).send({
         message: 'El empleado temporal ha sido re-contratado',
