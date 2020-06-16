@@ -20,8 +20,7 @@ BEGIN
 	DECLARE total DECIMAL(10, 2) DEFAULT 0;
 
   SET diasIncapacitado = (
-    SELECT
-      (CASE SUM(cantidad) WHEN (SUM(cantidad) <> 0) THEN SUM(cantidad) ELSE 0 END)
+    SELECT (CASE WHEN (SUM(cantidad) <> 0) THEN SUM(cantidad) ELSE 0 END)
     FROM incapacidades
       WHERE activo = true  AND id_empleado = _id AND YEAR(fecha_salida) = _anio AND MONTH(fecha_salida) = _mes
   );
@@ -36,6 +35,49 @@ BEGIN
 
     SET total = (salarioHora * horasJornada * (tempDiasContratado - diasIncapacitado));
   END IF;
+
+  RETURN total;
+END$$
+DELIMITER ;
+
+/* -------------------------------------------------------------------------- */
+/*               Funcion Salario Bruto Chofer Servicio Especial               */
+/* -------------------------------------------------------------------------- */
+
+DROP FUNCTION IF EXISTS `salario_bruto_especial`;
+
+DELIMITER $$
+USE `adisj`$$
+CREATE DEFINER=`root`@`localhost` FUNCTION `salario_bruto_especial`(
+  _id INT,
+  _mes INT,
+  _anio INT
+) RETURNS DECIMAL(10, 2)
+  READS SQL DATA
+  DETERMINISTIC
+BEGIN
+  -- DECLARE salarioHoraEspecial DECIMAL(10, 2) DEFAULT 0;
+  -- DECLARE horasJornadaEspecial INT DEFAULT 0;
+	DECLARE total DECIMAL(10, 2) DEFAULT 0;
+
+  -- SET salarioHoraEspecial = (
+  --   SELECT (CASE ac.salario_hora WHEN (ac.salario_hora <> 0) THEN ac.salario_hora ELSE 0 END)
+  --   FROM asignaciones_choferes ac
+  --   INNER JOIN tareas t ON t.id = ac.id_tarea
+  --   WHERE t.id_empleado = _id
+  -- );
+  -- SET horasJornadaEspecial = (
+  --   SELECT SELECT (CASE ac.horas_servicio WHEN (ac.horas_servicio <> 0) THEN ac.horas_servicio ELSE 0 END)
+  --   FROM asignaciones_choferes ac
+  --   INNER JOIN tareas t ON t.id = ac.id_tarea
+  --   WHERE t.id_empleado = _id
+  -- );
+
+  SET total = (SELECT (CASE WHEN (sum((ac.salario_hora * ac.horas_servicio)) > 0) THEN sum((ac.salario_hora * ac.horas_servicio))
+        ELSE 0 END) as salario_bruto
+    FROM asignaciones_choferes ac
+    INNER JOIN tareas t ON t.id = ac.id_tarea
+    WHERE YEAR(t.fecha_asignacion) = _anio AND MONTH(t.fecha_asignacion) = _mes AND t.id_empleado = _id AND ac.tipo_servicio = 'Especial');
 
   RETURN total;
 END$$
@@ -118,25 +160,25 @@ BEGIN
 
 	IF(SELECT tipo_empleado FROM empleados WHERE id = _id) <> 4 THEN
     SET totalPermisos = (
-      SELECT (CASE SUM(horas) WHEN (SUM(horas) <> 0) THEN SUM(horas) ELSE 0 END)
+      SELECT (CASE WHEN (SUM(horas) <> 0) THEN SUM(horas) ELSE 0 END)
       FROM permisos
         WHERE activo = true AND id_empleado = _id AND YEAR(fecha_salida) = _anio AND MONTH(fecha_salida) = _mes
     );
 
     SET horasExtra = (
-      SELECT (CASE SUM(cantidad_horas) WHEN (SUM(cantidad_horas) <> 0) THEN SUM(cantidad_horas) ELSE 0 END)
+      SELECT (CASE WHEN (SUM(cantidad_horas) <> 0) THEN SUM(cantidad_horas) ELSE 0 END)
       FROM horas_extras
         WHERE activo = true AND id_estado = 2 AND id_empleado = _id AND YEAR(fecha) = _anio AND MONTH(fecha) = _mes
     );
 
     SET retenciones = (
-      SELECT (CASE SUM(retencion) WHEN (SUM(retencion) <> 0) THEN SUM(retencion) ELSE 0 END)
+      SELECT (CASE WHEN (SUM(retencion) <> 0) THEN SUM(retencion) ELSE 0 END)
       FROM retenciones_salariales
         WHERE activo = true AND id_empleado = _id
     );
 
     SET vacacionesUsadas = (
-      SELECT (CASE SUM(cantidad) WHEN (SUM(cantidad) <> 0) THEN SUM(cantidad) ELSE 0 END)
+      SELECT (CASE WHEN (SUM(cantidad) <> 0) THEN SUM(cantidad) ELSE 0 END)
       FROM vacaciones
         WHERE activo = true AND id_empleado = _id AND YEAR(fecha_salida) = _anio AND MONTH(fecha_salida) = _mes
     );
@@ -152,7 +194,68 @@ BEGIN
 
   RETURN total - impuestoRenta;
 END$$
+DELIMITER ;
 
+/* -------------------------------------------------------------------------- */
+/*                         Funcion Salario Neto Chofer                        */
+/* -------------------------------------------------------------------------- */
+USE `adisj`;
+DROP FUNCTION IF EXISTS `salario_neto_chofer`;
+
+DELIMITER $$
+USE `adisj`$$
+CREATE DEFINER=`root`@`localhost` FUNCTION `salario_neto_chofer`(
+	_id INT,
+  _mes INT,
+  _anio INT
+) RETURNS DECIMAL(10, 2)
+  READS SQL DATA
+  DETERMINISTIC
+BEGIN
+	DECLARE horasExtra INT DEFAULT 0;
+	DECLARE totalPermisos INT DEFAULT 0;
+  DECLARE salarioHora DECIMAL(10, 2) DEFAULT 0;
+  DECLARE horasJornada INT DEFAULT 0;
+	DECLARE totalBonos INT DEFAULT 0;
+  DECLARE vacacionesUsadas INT DEFAULT 0;
+  DECLARE retenciones DECIMAL(10, 2) DEFAULT 0;
+	DECLARE salarioBruto DECIMAL(10, 2) DEFAULT 0;
+  DECLARE impuestoRenta DECIMAL(10, 2) DEFAULT 0;
+	DECLARE total DECIMAL(10, 2) DEFAULT 0;
+
+	SET salarioBruto = (SELECT salario_bruto(_id, _mes, _anio));
+	SET impuestoRenta = (SELECT impuesto_renta(_id, _mes, _anio));
+
+	IF(SELECT tipo_empleado FROM empleados WHERE id = _id) <> 4 THEN
+    SET totalPermisos = (
+      SELECT (CASE WHEN (SUM(horas) <> 0) THEN SUM(horas) ELSE 0 END)
+      FROM permisos
+        WHERE activo = true AND id_empleado = _id AND YEAR(fecha_salida) = _anio AND MONTH(fecha_salida) = _mes
+    );
+
+    SET retenciones = (
+      SELECT (CASE WHEN (SUM(retencion) <> 0) THEN SUM(retencion) ELSE 0 END)
+      FROM retenciones_salariales
+        WHERE activo = true AND id_empleado = _id
+    );
+
+    SET vacacionesUsadas = (
+      SELECT (CASE WHEN (SUM(cantidad) <> 0) THEN SUM(cantidad) ELSE 0 END)
+      FROM vacaciones
+        WHERE activo = true AND id_empleado = _id AND YEAR(fecha_salida) = _anio AND MONTH(fecha_salida) = _mes
+    );
+
+    SET salarioHora = (SELECT salario_hora FROM salarios WHERE activo = true AND id_empleado = _id);
+    SET horasJornada = (SELECT jornada FROM salarios WHERE activo = true AND id_empleado = _id);
+
+	  SET total = ((salarioBruto - retenciones) + (vacacionesUsadas * salarioHora * horasJornada * -1) + (vacacionesUsadas * salarioHora * horasJornada) + (salarioHora * totalPermisos * -1) + (horasExtra * salarioHora * 1.5) + (totalBonos) + ((((salarioHora * horasJornada) * 5) * 50) / 100));
+
+  ELSE
+    SET total = salarioBruto;
+  END IF;
+
+  RETURN total - impuestoRenta;
+END$$
 DELIMITER ;
 
 /* -------------------------------------------------------------------------- */
@@ -188,7 +291,6 @@ BEGIN
 
   RETURN total;
 END $$
-
 DELIMITER ;
 
 /* -------------------------------------------------------------------------- */
@@ -306,5 +408,4 @@ BEGIN
 
   RETURN resultado;
 END$$
-
 DELIMITER ;

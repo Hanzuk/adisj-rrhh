@@ -215,6 +215,7 @@ CREATE TABLE asignaciones_choferes (
   tipo_servicio VARCHAR(10) NOT NULL,
   salario_hora DECIMAL(10, 2) NOT NULL,
   vehiculo VARCHAR(50) NOT NULL,
+  horas_servicio TINYINT NOT NULL,
   horario TINYINT NOT NULL,
   id_tarea INT NOT NULL,
   CONSTRAINT pk_asignaciones_choferes PRIMARY KEY(id),
