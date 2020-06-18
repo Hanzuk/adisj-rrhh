@@ -1,8 +1,7 @@
 <template>
   <div class="login columns is-centered is-vcentered">
     <div class="column is-one-quarter">
-      <h1 class="title">Inicio de sesión</h1>
-      <h2 class="subtitle">Subtitle</h2>
+      <h1 class="title has-text-centered">Inicio de sesión</h1>
       <b-field
         label="Correo electrónico"
         :message="[
@@ -34,7 +33,6 @@
           password-reveal
         ></b-input>
       </b-field>
-      <p>{{ error }}</p>
       <b-button
         type="is-primary"
         @click="login"
@@ -43,6 +41,7 @@
         >Iniciar sesión</b-button
       >
     </div>
+    <div ref="element"></div>
   </div>
 </template>
 
@@ -55,7 +54,6 @@ export default {
     return {
       email: '',
       password: '',
-      error: null,
     };
   },
   validations: {
@@ -70,6 +68,10 @@ export default {
   },
   methods: {
     async login() {
+      const loadingComponent = this.$buefy.loading.open({
+        container: this.$refs.element.$el,
+      });
+
       try {
         await this.$store.dispatch('auth/login', {
           correo: this.email,
@@ -78,7 +80,14 @@ export default {
 
         this.$router.push({ name: 'dashboard' });
       } catch (error) {
-        this.error = error.response.data.message;
+        loadingComponent.close();
+        // this.error = error.response.data.message;
+        this.$buefy.toast.open({
+          duration: 3000,
+          message: 'Al parecer estas credenciales son inválidas.',
+          // position: 'is-bottom',
+          type: 'is-danger',
+        });
       }
     },
   },
