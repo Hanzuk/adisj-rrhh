@@ -17,17 +17,17 @@ export class WagesBusiness {
     const overtime = await this.repository.retrieveEmployeeOvertime(
       userId,
       getYear(new Date()),
-      getMonth(new Date())
+      getMonth(new Date()) + 1
     );
     const handicaps = await this.repository.retrieveEmployeeHandicaps(
       userId,
       getYear(new Date()),
-      getMonth(new Date())
+      getMonth(new Date()) + 1
     );
     const permissions = await this.repository.retrieveEmployeePermissions(
       userId,
       getYear(new Date()),
-      getMonth(new Date())
+      getMonth(new Date()) + 1
     );
 
     return {
@@ -43,7 +43,7 @@ export class WagesBusiness {
     return await this.repository.retrieveSalaryCalc(
       userId,
       getYear(new Date()),
-      getMonth(new Date())
+      getMonth(new Date()) + 1
     );
   }
 }

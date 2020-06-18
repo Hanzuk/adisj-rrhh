@@ -29,11 +29,11 @@ BEGIN
   SET horasJornada = (SELECT jornada FROM salarios	WHERE activo = true	AND id_empleado = _id);
 
   IF (SELECT tipo_empleado FROM empleados WHERE id = _id) <> 4 THEN
-    SET total = (salarioHora * horasJornada * (30 - diasIncapacitado));
+    SET total = (salarioHora * horasJornada * (30 - diasIncapacitado)); --CCSS
 	ELSE
     SET tempDiasContratado = (SELECT SUM(dias) FROM contratos_empleados_temporales WHERE id_empleado = _id AND activo = true);
 
-    SET total = (salarioHora * horasJornada * (tempDiasContratado - diasIncapacitado));
+    SET total = (salarioHora * horasJornada * (tempDiasContratado - diasIncapacitado)); --CCSS
   END IF;
 
   RETURN total;
@@ -186,7 +186,7 @@ BEGIN
     SET salarioHora = (SELECT salario_hora FROM salarios WHERE activo = true AND id_empleado = _id);
     SET horasJornada = (SELECT jornada FROM salarios WHERE activo = true AND id_empleado = _id);
 
-	  SET total = ((salarioBruto - retenciones) + (vacacionesUsadas * salarioHora * horasJornada * -1) + (vacacionesUsadas * salarioHora * horasJornada) + (salarioHora * totalPermisos * -1) + (horasExtra * salarioHora * 1.5) + (totalBonos) + ((((salarioHora * horasJornada) * 5) * 50) / 100));
+	  SET total = ((salarioBruto - retenciones) + (vacacionesUsadas * salarioHora * horasJornada * -1) + (vacacionesUsadas * salarioHora * horasJornada) + (salarioHora * totalPermisos * -1) + (horasExtra * salarioHora * 1.5) + (totalBonos) + ((((salarioHora * horasJornada) ) ) ));
 
   ELSE
     SET total = salarioBruto;

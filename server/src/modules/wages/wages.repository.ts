@@ -49,10 +49,9 @@ export class WagesRepository {
       AND id_empleado = ?
       AND YEAR(fecha) = ?
       AND MONTH(fecha) = ?
-      AND id_estado = 2`,
+      AND id_estado = 2;`,
       [userId, year, month]
     );
-
     return result[0].cantidad_horas;
   }
 

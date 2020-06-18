@@ -4,7 +4,6 @@ import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import path from 'path';
 
 import { LoginModule } from './modules/login/login.module';
 import { UsersModule } from './modules/users/users.module';
@@ -35,7 +34,6 @@ class AppModule {
     this.app.use(compression());
     this.app.use(cors());
     this.app.use(cookieParser());
-    this.app.use(express.static(path.join(__dirname, '../public/downloads')));
   }
 
   private modules() {

@@ -32,7 +32,6 @@ export class LoginController {
       });
 
     const valid = await compare(clave, credentials.clave);
-    console.log('LoginController -> constructor -> credentials', credentials);
 
     if (!valid)
       return res.status(401).send({
