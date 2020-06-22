@@ -20,5 +20,10 @@ export class WageseModule {
       Auth.role([Rol.Admin]),
       this.controller.calcSalary
     );
+    this.router.post(
+      '/:userId/increase',
+      Auth.role([Rol.Admin]),
+      this.controller.increaseSalary
+    );
   }
 }

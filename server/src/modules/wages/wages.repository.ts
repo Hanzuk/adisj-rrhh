@@ -74,17 +74,42 @@ export class WagesRepository {
     return result[0].aux;
   }
 
-  public async retrieveSalaryCalc(
-    userId: number,
-    year: number,
-    month: number
-  ): Promise<{
+  public async retrieveEmployeeWithholding(userId: number): Promise<number> {
+    const result = await DB.query(
+      `SELECT (CASE WHEN (SUM(retencion) <> 0) THEN SUM(retencion) ELSE 0 END) as retencion
+      FROM retenciones_salariales
+      WHERE activo = true AND id_empleado = ?;`,
+      [userId]
+    );
+
+    return result[0].retencion;
+  }
+
+  public async retrieveSalaryCalc({
+    userId,
+    year,
+    month,
+  }: {
+    userId: number;
+    year: number;
+    month: number;
+  }): Promise<{
     salario_bruto: number;
     impuesto_renta: number;
     salario_neto: number;
     salario: number;
     aguinaldo: number;
+    porcentaje_cargas_sociales: number;
+    total_deduccion: number;
+    salario_especial_chofer?: number;
+    total_deduccion_especial?: number;
   }> {
+    let specialGrossWage: number;
+    const userType = await DB.query(
+      `SELECT tipo_empleado FROM empleados WHERE id = ?;`,
+      [userId]
+    );
+
     const grossWage = await DB.query(
       `SELECT salario_bruto(${userId}, ${month}, ${year}) AS salario_bruto;`,
       ''
@@ -110,12 +135,47 @@ export class WagesRepository {
       ''
     );
 
+    if (userType[0].tipo_empleado === 3) {
+      const special = await DB.query(
+        `SELECT salario_bruto_especial(${userId}, ${month}, ${year}) AS salario_especial;`,
+        ''
+      );
+      specialGrossWage = special[0].salario_especial;
+
+      const specialDeduction = specialGrossWage * 0.105;
+
+      return {
+        impuesto_renta: incomeTax[0].impuesto_renta,
+        porcentaje_cargas_sociales: 10.5,
+        salario_bruto: grossWage[0].salario_bruto,
+        salario: netSalary[0].salario_neto,
+        total_deduccion: netSalary[0].salario_neto * 0.105,
+        salario_especial_chofer: specialGrossWage - specialDeduction,
+        total_deduccion_especial: specialGrossWage * 0.105,
+        salario_neto: wage[0].salario + (specialGrossWage - specialDeduction),
+        aguinaldo: bonus[0].aguinaldo,
+      };
+    }
+
     return {
-      salario_bruto: grossWage[0].salario_bruto,
       impuesto_renta: incomeTax[0].impuesto_renta,
-      salario_neto: netSalary[0].salario_neto,
-      salario: wage[0].salario,
+      porcentaje_cargas_sociales: 10.5,
+      salario_bruto: grossWage[0].salario_bruto,
+      salario: netSalary[0].salario_neto,
+      total_deduccion: netSalary[0].salario_neto * 0.105,
+      salario_neto: wage[0].salario,
       aguinaldo: bonus[0].aguinaldo,
     };
+  }
+
+  public async addIncrease(userId: number, amount: number) {
+    await DB.query(
+      `UPDATE salarios SET salario_hora = salario_hora + ${amount} WHERE id_empleado = ?`,
+      [userId]
+    );
+    await DB.query(`INSERT INTO aumentos_salariales SET ?`, {
+      id_empleado: userId,
+      cantidad: amount,
+    });
   }
 }

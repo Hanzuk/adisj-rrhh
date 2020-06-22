@@ -64,11 +64,10 @@ export class UsersBusiness {
   ) {
     const salary = await this.repository.getEmployeeSalary(userId);
 
-    await this.repository.updateEmployeeBasic(userId, basicData);
-
-    if (salary.salario_hora > salaryData.salario_hora)
+    if (salaryData.salario_hora > salary.salario_hora)
       throw new Error('Los aumentos al salario no se pueden realizar aqui');
 
+    await this.repository.updateEmployeeBasic(userId, basicData);
     await this.repository.updateEmployeeSalary(userId, salaryData);
   }
 

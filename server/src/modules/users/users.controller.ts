@@ -192,6 +192,7 @@ export class UsersController {
       return res.status(400).send({
         message: 'No se pudo actualzar los datos del empleado',
         error,
+        err_message: error.message,
       });
     }
   };

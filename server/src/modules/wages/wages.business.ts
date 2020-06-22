@@ -12,6 +12,7 @@ export class WagesBusiness {
     horas_extras: number;
     incapacidades_mes: number;
     permisos: number;
+    retenciones: number;
   }> {
     const salary = await this.repository.retrieveEmployeeSalary(userId);
     const overtime = await this.repository.retrieveEmployeeOvertime(
@@ -29,6 +30,9 @@ export class WagesBusiness {
       getYear(new Date()),
       getMonth(new Date()) + 1
     );
+    const withholding = await this.repository.retrieveEmployeeWithholding(
+      userId
+    );
 
     return {
       salario_hora: salary.salario_hora,
@@ -36,14 +40,19 @@ export class WagesBusiness {
       horas_extras: overtime === null ? 0 : overtime,
       incapacidades_mes: handicaps === null ? 0 : handicaps,
       permisos: permissions === null ? 0 : permissions,
+      retenciones: withholding,
     };
   }
 
   public async getSalaryCalc(userId: number) {
-    return await this.repository.retrieveSalaryCalc(
+    return await this.repository.retrieveSalaryCalc({
       userId,
-      getYear(new Date()),
-      getMonth(new Date()) + 1
-    );
+      year: getYear(new Date()),
+      month: getMonth(new Date()) + 1,
+    });
+  }
+
+  public async addIncrease(userId: number, amount: number) {
+    await this.repository.addIncrease(userId, amount);
   }
 }
