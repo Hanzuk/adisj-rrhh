@@ -29,11 +29,12 @@ BEGIN
   SET horasJornada = (SELECT jornada FROM salarios	WHERE activo = true	AND id_empleado = _id);
 
   IF (SELECT tipo_empleado FROM empleados WHERE id = _id) <> 4 THEN
-    SET total = (salarioHora * horasJornada * (30 - diasIncapacitado)); --CCSS
+    /*CCSS*/
+    SET total = (salarioHora * horasJornada * (30 - diasIncapacitado));
 	ELSE
     SET tempDiasContratado = (SELECT SUM(dias) FROM contratos_empleados_temporales WHERE id_empleado = _id AND activo = true);
-
-    SET total = (salarioHora * horasJornada * (tempDiasContratado - diasIncapacitado)); --CCSS
+     /*CCSS*/
+    SET total = (salarioHora * horasJornada * (tempDiasContratado - diasIncapacitado));
   END IF;
 
   RETURN total;
@@ -187,68 +188,6 @@ BEGIN
     SET horasJornada = (SELECT jornada FROM salarios WHERE activo = true AND id_empleado = _id);
 
 	  SET total = ((salarioBruto - retenciones) + (vacacionesUsadas * salarioHora * horasJornada * -1) + (vacacionesUsadas * salarioHora * horasJornada) + (salarioHora * totalPermisos * -1) + (horasExtra * salarioHora * 1.5) + (totalBonos) + ((((salarioHora * horasJornada) ) ) ));
-
-  ELSE
-    SET total = salarioBruto;
-  END IF;
-
-  RETURN total - impuestoRenta;
-END$$
-DELIMITER ;
-
-/* -------------------------------------------------------------------------- */
-/*                         Funcion Salario Neto Chofer                        */
-/* -------------------------------------------------------------------------- */
-USE `adisj`;
-DROP FUNCTION IF EXISTS `salario_neto_chofer`;
-
-DELIMITER $$
-USE `adisj`$$
-CREATE DEFINER=`root`@`localhost` FUNCTION `salario_neto_chofer`(
-	_id INT,
-  _mes INT,
-  _anio INT
-) RETURNS DECIMAL(10, 2)
-  READS SQL DATA
-  DETERMINISTIC
-BEGIN
-	DECLARE horasExtra INT DEFAULT 0;
-	DECLARE totalPermisos INT DEFAULT 0;
-  DECLARE salarioHora DECIMAL(10, 2) DEFAULT 0;
-  DECLARE horasJornada INT DEFAULT 0;
-	DECLARE totalBonos INT DEFAULT 0;
-  DECLARE vacacionesUsadas INT DEFAULT 0;
-  DECLARE retenciones DECIMAL(10, 2) DEFAULT 0;
-	DECLARE salarioBruto DECIMAL(10, 2) DEFAULT 0;
-  DECLARE impuestoRenta DECIMAL(10, 2) DEFAULT 0;
-	DECLARE total DECIMAL(10, 2) DEFAULT 0;
-
-	SET salarioBruto = (SELECT salario_bruto(_id, _mes, _anio));
-	SET impuestoRenta = (SELECT impuesto_renta(_id, _mes, _anio));
-
-	IF(SELECT tipo_empleado FROM empleados WHERE id = _id) <> 4 THEN
-    SET totalPermisos = (
-      SELECT (CASE WHEN (SUM(horas) <> 0) THEN SUM(horas) ELSE 0 END)
-      FROM permisos
-        WHERE activo = true AND id_empleado = _id AND YEAR(fecha_salida) = _anio AND MONTH(fecha_salida) = _mes
-    );
-
-    SET retenciones = (
-      SELECT (CASE WHEN (SUM(retencion) <> 0) THEN SUM(retencion) ELSE 0 END)
-      FROM retenciones_salariales
-        WHERE activo = true AND id_empleado = _id
-    );
-
-    SET vacacionesUsadas = (
-      SELECT (CASE WHEN (SUM(cantidad) <> 0) THEN SUM(cantidad) ELSE 0 END)
-      FROM vacaciones
-        WHERE activo = true AND id_empleado = _id AND YEAR(fecha_salida) = _anio AND MONTH(fecha_salida) = _mes
-    );
-
-    SET salarioHora = (SELECT salario_hora FROM salarios WHERE activo = true AND id_empleado = _id);
-    SET horasJornada = (SELECT jornada FROM salarios WHERE activo = true AND id_empleado = _id);
-
-	  SET total = ((salarioBruto - retenciones) + (vacacionesUsadas * salarioHora * horasJornada * -1) + (vacacionesUsadas * salarioHora * horasJornada) + (salarioHora * totalPermisos * -1) + (horasExtra * salarioHora * 1.5) + (totalBonos) + ((((salarioHora * horasJornada) * 5) * 50) / 100));
 
   ELSE
     SET total = salarioBruto;
