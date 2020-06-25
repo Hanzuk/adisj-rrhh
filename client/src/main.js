@@ -5,6 +5,7 @@ import store from './store';
 import Vuelidate from 'vuelidate';
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
+import './vee-validate';
 
 Vue.use(Vuelidate);
 Vue.use(Buefy);

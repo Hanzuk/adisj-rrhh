@@ -1,4 +1,4 @@
-import AuthService from '@/services/AuthService.js';
+import Service from '@/services/AdisjService.js';
 
 export const namespaced = true;
 
@@ -10,6 +10,7 @@ export const mutations = {
   SET_TOKEN(state, token) {
     state.token = token;
     localStorage.setItem('jwt', token);
+    Service.api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   },
   CLEAR_TOKEN() {
     localStorage.removeItem('jwt');
@@ -19,7 +20,7 @@ export const mutations = {
 
 export const actions = {
   async login({ commit }, credentials) {
-    const { data } = await AuthService.login(credentials);
+    const { data } = await Service.login(credentials);
     commit('SET_TOKEN', data.token);
   },
   logout({ commit }) {

@@ -16,30 +16,17 @@
         label="Contraseña"
         :message="[
           {
-            'La contraseña debe contener almenos 10 caracteres':
-              !$v.password.minLength && $v.password.$error,
+            'La contraseña debe contener almenos 10 caracteres': !$v.password.minLength && $v.password.$error,
           },
           {
-            'Este campo es requerido':
-              !$v.password.required && $v.password.$error,
+            'Este campo es requerido': !$v.password.required && $v.password.$error,
           },
         ]"
         :type="{ 'is-danger': $v.password.$error }"
       >
-        <b-input
-          type="password"
-          v-model="password"
-          @blur="$v.password.$touch()"
-          password-reveal
-        ></b-input>
+        <b-input type="password" v-model="password" @blur="$v.password.$touch()" password-reveal></b-input>
       </b-field>
-      <b-button
-        type="is-primary"
-        @click="login"
-        :disabled="$v.$invalid"
-        expanded
-        >Iniciar sesión</b-button
-      >
+      <b-button type="is-primary" @click="login" :disabled="$v.$invalid" expanded>Iniciar sesión</b-button>
     </div>
     <div ref="element"></div>
   </div>
@@ -57,14 +44,8 @@ export default {
     };
   },
   validations: {
-    email: {
-      required,
-      email,
-    },
-    password: {
-      required,
-      minLength: minLength(2),
-    },
+    email: { required, email },
+    password: { required, minLength: minLength(2) },
   },
   methods: {
     async login() {
@@ -78,6 +59,7 @@ export default {
           clave: this.password,
         });
 
+        loadingComponent.close();
         this.$router.push({ name: 'dashboard' });
       } catch (error) {
         loadingComponent.close();

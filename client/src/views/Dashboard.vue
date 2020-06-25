@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="container">
     <Navbar />
     <h1 class="title is-3">Dashboard</h1>
     <h3 class="subtitle is-3">¡Bienvenido {user.name}!</h3>

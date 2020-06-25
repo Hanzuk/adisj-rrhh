@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import { decode } from 'jsonwebtoken';
+import employeeRoutes from '@/router/employee.js';
 
 Vue.use(VueRouter);
 
@@ -14,27 +15,15 @@ const routes = [
       requiresAuth: false,
       adminOnly: false,
     },
-    component: () =>
-      import(/* webpackChunkName: "login" */ '../views/LoginUser.vue'),
+    component: () => import(/* webpackChunkName: "login" */ '../views/LoginUser.vue'),
   },
   {
     path: '/dashboard',
     name: 'dashboard',
     meta: { title: 'Inicio | Adisj', requiresAuth: true, adminOnly: false },
-    component: () =>
-      import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
+    component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
   },
-  {
-    path: '/nuevo-empleado',
-    name: 'newEmployee',
-    meta: {
-      title: 'Nuevo empleado | Adisj',
-      requiresAuth: true,
-      adminOnly: true,
-    },
-    component: () =>
-      import(/* webpackChunkName: "newEmployee" */ '../views/NewEmployee.vue'),
-  },
+  ...employeeRoutes,
 ];
 
 const router = new VueRouter({
@@ -58,10 +47,7 @@ router.beforeEach((to, from, next) => {
   if (loggedIn) {
     const decoded = decode(loggedIn);
 
-    if (
-      decoded.tipo_empleado !== 1 &&
-      to.matched.some(record => record.meta.adminOnly)
-    ) {
+    if (decoded.tipo_empleado !== 1 && to.matched.some(record => record.meta.adminOnly)) {
       return next({ name: 'dashboard' });
     }
   }
