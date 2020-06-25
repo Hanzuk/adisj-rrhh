@@ -233,4 +233,15 @@ export class UsersController {
       return res.status(400).send(error);
     }
   };
+
+  public catalogues = async (req: Request, res: Response) => {
+    try {
+      const catalog = await this.business.getCatalog();
+      return res.status(200).send(catalog);
+    } catch (error) {
+      return res
+        .status(400)
+        .send({ message: 'No se puedo obtener el catalago' });
+    }
+  };
 }

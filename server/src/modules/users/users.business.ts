@@ -84,4 +84,8 @@ export class UsersBusiness {
   async fire(data: { id_empleado: number; descripcion: string }) {
     await this.repository.fire(data);
   }
+
+  async getCatalog() {
+    return await this.repository.addressCatalog();
+  }
 }

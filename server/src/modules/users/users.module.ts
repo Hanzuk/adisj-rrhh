@@ -48,6 +48,8 @@ export class UsersModule {
       this.controller.rehire
     );
 
+    this.router.get('/catalogues/address', this.controller.catalogues);
+
     //Elimina un empleado especifico
     // this.router.delete(
     //   '/:userId',

@@ -248,4 +248,25 @@ export class UsersRepository {
       data.id_empleado,
     ]);
   }
+
+  async addressCatalog() {
+    const provinces = await DB.query(
+      'SELECT codigo, nombre FROM provincias;',
+      ''
+    );
+    const cantones = await DB.query(
+      'SELECT codigo, nombre, codigo_provincia FROM cantones;',
+      ''
+    );
+    const districts = await DB.query(
+      'SELECT codigo, nombre, codigo_canton FROM distritos;',
+      ''
+    );
+
+    return {
+      provinces: [...provinces],
+      cantones: [...cantones],
+      districts: [...districts],
+    };
+  }
 }
