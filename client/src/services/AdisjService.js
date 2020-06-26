@@ -23,7 +23,10 @@ export default {
   async getAddressCatalogue() {
     return await api.get(`/users/catalogues/address`);
   },
-  async postEmployee(data) {
+  async postPermanent(data) {
     return await api.post(`/users`, data);
+  },
+  async postTemporary(data) {
+    return await api.post(`/users/temporary`, data);
   },
 };

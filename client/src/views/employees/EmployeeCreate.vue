@@ -1,38 +1,41 @@
 <template>
   <div class="container">
     <Navbar />
-    <section class="section">
-      <div class="container">
-        <div class="columns is-centered is-vcentered">
-          <div class="column is-two-fifths">
-            {{ newEmployeeData }}
-            <ValidationObserver ref="observer" v-slot="{ invalid }">
-              <EmployeeType @type-data="setType" />
-              <EmployeeBasic @basic-data="setBasic" />
-              <EmployeeContact @contact-data="setContact" />
-              <EmployeeCredentials @credentials-data="setCredentials" />
-              <EmployeeSalary @salary-data="setSalary" />
-              <b-field>
-                <button class="button is-primary is-pulled-right" @click="saveEmployee" :disabled="invalid">
-                  Guardar empleado
-                </button>
-              </b-field>
-            </ValidationObserver>
-          </div>
+    {{ newEmployeeData }}
+    <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="section">
+      <div class="columns">
+        <div class="column">
+          <EmployeeBasic @basic-data="setBasic" />
+        </div>
+        <div class="column">
+          <EmployeeCredentials @credentials-data="setCredentials" />
         </div>
       </div>
-      <div class="container"></div>
-    </section>
+      <div class="columns">
+        <div class="column">
+          <EmployeeContact @contact-data="setContact" />
+        </div>
+        <div class="column">
+          <EmployeeCreateLabour @labour-data="setLabour" />
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column">
+          <button class="button is-primary is-pulled-right" @click="saveEmployee" :disabled="invalid">
+            Guardar empleado
+          </button>
+        </div>
+      </div>
+    </ValidationObserver>
   </div>
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue';
-import EmployeeType from '@/components/employee/EmployeeCreateType.vue';
 import EmployeeBasic from '@/components/employee/EmployeeCreateBasic.vue';
 import EmployeeContact from '@/components/employee/EmployeeCreateContact.vue';
 import EmployeeCredentials from '@/components/employee/EmployeeCreateCredentials.vue';
-import EmployeeSalary from '@/components/employee/EmployeeCreateSalary.vue';
+import EmployeeCreateLabour from '@/components/employee/EmployeeCreateLabour.vue';
 import store from '@/store';
 import { ValidationObserver } from 'vee-validate';
 import Service from '@/services/AdisjService.js';
@@ -41,11 +44,10 @@ export default {
   name: 'EmployeeCreate',
   components: {
     Navbar,
-    EmployeeType,
     EmployeeBasic,
     EmployeeContact,
     EmployeeCredentials,
-    EmployeeSalary,
+    EmployeeCreateLabour,
     ValidationObserver,
   },
   data() {
@@ -58,9 +60,6 @@ export default {
     next();
   },
   methods: {
-    setType(data) {
-      this.newEmployeeData = { ...this.newEmployeeData, ...data };
-    },
     setBasic(data) {
       this.newEmployeeData = { ...this.newEmployeeData, ...data };
     },
@@ -70,14 +69,16 @@ export default {
     setCredentials(data) {
       this.newEmployeeData = { ...this.newEmployeeData, ...data };
     },
-    setSalary(data) {
+    setLabour(data) {
       this.newEmployeeData = { ...this.newEmployeeData, ...data };
     },
     async saveEmployee() {
-      console.log(this);
-
       try {
-        await Service.postEmployee(JSON.stringify({ ...this.newEmployeeData, activo: true }));
+        if (this.newEmployeeData.tipo_empleado == 4) {
+          await Service.postTemporary(JSON.stringify({ ...this.newEmployeeData, activo: true }));
+        } else {
+          await Service.postPermanent(JSON.stringify({ ...this.newEmployeeData, activo: true }));
+        }
         this.$buefy.toast.open({
           duration: 3000,
           message: 'Empleado guardado con éxito.',

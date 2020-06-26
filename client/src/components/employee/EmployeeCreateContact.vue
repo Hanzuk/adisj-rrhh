@@ -5,89 +5,79 @@
       Ingresa los datos de domicilio y teléfonos
     </h2>
     <div class="columns">
-      <div class="column">
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <b-field label="Provincia" :message="errors" :type="{ 'is-danger': errors[0] }">
-            <b-select v-model="province" @input="sendDataToParent" placeholder="Selecciona uno" expanded>
-              <option v-for="province in catalogue.provinces" :key="province.codigo" :value="province.codigo">
-                {{ province.nombre }}
-              </option>
-            </b-select>
-          </b-field>
-        </ValidationProvider>
-      </div>
+      <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column">
+        <b-field label="Provincia" :message="errors" :type="{ 'is-danger': errors[0] }">
+          <b-select v-model="province" @input="sendDataToParent" placeholder="Selecciona uno" expanded>
+            <option v-for="province in catalogue.provinces" :key="province.codigo" :value="province.codigo">
+              {{ province.nombre }}
+            </option>
+          </b-select>
+        </b-field>
+      </ValidationProvider>
     </div>
 
     <div class="columns">
-      <div class="column">
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <b-field label="Cantón" :message="errors" :type="{ 'is-danger': errors[0] }">
-            <b-select v-model="canton" @input="sendDataToParent" placeholder="Selecciona uno" expanded>
-              <option v-for="canton in cantones" :key="canton.codigo" :value="canton.codigo">
-                {{ canton.nombre }}
-              </option>
-            </b-select>
-          </b-field>
-        </ValidationProvider>
-      </div>
+      <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column">
+        <b-field label="Cantón" :message="errors" :type="{ 'is-danger': errors[0] }">
+          <b-select v-model="canton" @input="sendDataToParent" placeholder="Selecciona uno" expanded>
+            <option v-for="canton in cantones" :key="canton.codigo" :value="canton.codigo">
+              {{ canton.nombre }}
+            </option>
+          </b-select>
+        </b-field>
+      </ValidationProvider>
     </div>
 
     <div class="columns">
-      <div class="column">
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <b-field label="Distrito" :message="errors" :type="{ 'is-danger': errors[0] }">
-            <b-select v-model="district" @input="sendDataToParent" placeholder="Selecciona uno" expanded>
-              <option v-for="district in districts" :key="district.codigo" :value="district.codigo">
-                {{ district.nombre }}
-              </option>
-            </b-select>
-          </b-field>
-        </ValidationProvider>
-      </div>
+      <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column">
+        <b-field label="Distrito" :message="errors" :type="{ 'is-danger': errors[0] }">
+          <b-select v-model="district" @input="sendDataToParent" placeholder="Selecciona uno" expanded>
+            <option v-for="district in districts" :key="district.codigo" :value="district.codigo">
+              {{ district.nombre }}
+            </option>
+          </b-select>
+        </b-field>
+      </ValidationProvider>
     </div>
 
     <div class="columns">
-      <div class="column">
-        <ValidationProvider :rules="{ required: true, address: /^[a-zA-ZA-zÀ-ú0-9.,\s]*$/ }" v-slot="{ errors, valid }">
-          <b-field
-            label="Dirección exacta"
-            :message="errors"
-            :type="{
-              'is-danger': errors[0],
-              'is-success': valid,
-            }"
-          >
-            <b-input v-model="address" @input="sendDataToParent" maxlength="200" type="textarea"></b-input>
-          </b-field>
-        </ValidationProvider>
-      </div>
+      <ValidationProvider
+        :rules="{ required: true, address: /^[a-zA-ZA-zÀ-ú0-9.,\s]*$/ }"
+        v-slot="{ errors, valid }"
+        tag="div"
+        class="column"
+      >
+        <b-field
+          label="Dirección exacta"
+          :message="errors"
+          :type="{
+            'is-danger': errors[0],
+            'is-success': valid,
+          }"
+        >
+          <b-input v-model="address" @input="sendDataToParent" maxlength="200" type="textarea"></b-input>
+        </b-field>
+      </ValidationProvider>
     </div>
 
     <b-field label="Números de teléfono"></b-field>
-    <ValidationObserver ref="observer" v-slot="{ invalid }">
-      <div class="columns">
-        <div class="column is-3">
-          <ValidationProvider rules="required" v-slot="{ errors }">
-            <b-field :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
-              <b-select v-model="type" placeholder="Tipo" expanded>
-                <option value="1">Celular</option>
-                <option value="2">Casa</option>
-              </b-select>
-            </b-field>
-          </ValidationProvider>
-        </div>
+    <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="columns">
+      <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-3">
+        <b-field :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
+          <b-select v-model="type" placeholder="Tipo" expanded>
+            <option value="1">Celular</option>
+            <option value="2">Casa</option>
+          </b-select>
+        </b-field>
+      </ValidationProvider>
+      <ValidationProvider rules="required|phone:8" v-slot="{ errors }" tag="div" class="column is-6">
+        <b-field :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
+          <b-input v-model="phone" @input="sendDataToParent" maxlength="8" expanded></b-input>
+        </b-field>
+      </ValidationProvider>
 
-        <div class="column is-6">
-          <ValidationProvider rules="required|phone:8" v-slot="{ errors }">
-            <b-field :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
-              <b-input v-model="phone" @input="sendDataToParent" maxlength="8" expanded></b-input>
-            </b-field>
-          </ValidationProvider>
-        </div>
-
-        <div class="column is-3">
-          <b-button class="button is-primary" @click="addPhone" :disabled="invalid" expanded>Agregar</b-button>
-        </div>
+      <div class="column is-3">
+        <b-button class="button is-primary" @click="addPhone" :disabled="invalid" expanded>Agregar</b-button>
       </div>
     </ValidationObserver>
 
