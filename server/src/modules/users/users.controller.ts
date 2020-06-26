@@ -8,19 +8,14 @@ import { Rol } from '../../utils/enums';
 import { IPhone } from './models/phone.interface';
 import { IAddress } from './models/address.interface';
 import { ISalary } from './models/salary.interface';
-import {
-  ITemporaryUser,
-  ITemporaryContract,
-} from './models/temporary.interface';
+import { ITemporaryUser, ITemporaryContract } from './models/temporary.interface';
 
 export class UsersController {
   constructor(private business: UsersBusiness = new UsersBusiness()) {}
 
   public newUser = async (req: Request, res: Response) => {
     if (req.body.tipo_empleado === Rol.Temporal) {
-      return res
-        .status(400)
-        .send({ message: 'Demasiados datos para este tipo de empleado' });
+      return res.status(400).send({ message: 'Demasiados datos para este tipo de empleado' });
     }
 
     const userData: IUser = {
@@ -50,12 +45,7 @@ export class UsersController {
     };
 
     try {
-      await this.business.saveEmployee(
-        userData,
-        addressData,
-        phonesData,
-        salaryData
-      );
+      await this.business.savePermanent(userData, addressData, phonesData, salaryData);
 
       return res.status(201).send({
         message: 'Nuevo empleado contratado',
@@ -70,12 +60,10 @@ export class UsersController {
 
   public newTemporaryUser = async (req: Request, res: Response) => {
     if (req.body.tipo_empleado !== Rol.Temporal) {
-      return res
-        .status(400)
-        .send({ message: 'Insuficientes datos para este tipo de empleado' });
+      return res.status(400).send({ message: 'Insuficientes datos para este tipo de empleado' });
     }
 
-    const userData: IUser = {
+    const basic: IUser = {
       cedula: req.body.cedula,
       nombre: req.body.nombre,
       p_apellido: req.body.p_apellido,
@@ -87,47 +75,37 @@ export class UsersController {
       tipo_empleado: req.body.tipo_empleado,
     };
 
-    const phonesData: IPhone[] = req.body.telefonos;
-    const addressData: IAddress = {
+    const phones: IPhone[] = req.body.telefonos;
+    const address: IAddress = {
       id_empleado: 0,
       codigo_provincia: req.body.direccion.provincia,
       codigo_canton: req.body.direccion.canton,
       codigo_distrito: req.body.direccion.distrito,
       direccion: req.body.direccion.direccion,
     };
-    const salaryData: ISalary = {
+    const salary: ISalary = {
       id_empleado: 0,
       salario_hora: req.body.salario_hora,
       jornada: req.body.jornada,
     };
 
     try {
-      const userId = await this.business.saveEmployee(
-        userData,
-        addressData,
-        phonesData,
-        salaryData
-      );
-
       const fecha_contrato = new Date();
 
-      const tempData: ITemporaryUser = {
-        id_empleado: userId,
+      const temp: ITemporaryUser = {
+        id_empleado: 0,
         fecha_salida: req.body.fecha_salida,
         descripcion: req.body.descripcion,
       };
-      const contractData: ITemporaryContract = {
-        id_empleado: userId,
+      const contrac: ITemporaryContract = {
+        id_empleado: 0,
         fecha_contrato,
-        fecha_salida: tempData.fecha_salida,
-        descripcion: tempData.descripcion,
-        dias: differenceInCalendarDays(
-          new Date(req.body.fecha_salida),
-          fecha_contrato
-        ),
+        fecha_salida: temp.fecha_salida,
+        descripcion: temp.descripcion,
+        dias: differenceInCalendarDays(new Date(req.body.fecha_salida), fecha_contrato),
       };
 
-      await this.business.saveTemporaryEmployee(tempData, contractData);
+      await this.business.saveTemporaryEmployee(basic, address, phones, salary, temp, contrac);
 
       return res.status(201).send({
         message: 'Nuevo empleado temporal contratado',
@@ -215,8 +193,7 @@ export class UsersController {
       });
     } catch (error) {
       return res.status(400).send({
-        message:
-          error.message || 'No se pudo re-contratar el empleado temporal',
+        message: error.message || 'No se pudo re-contratar el empleado temporal',
         error,
       });
     }
@@ -239,9 +216,7 @@ export class UsersController {
       const catalog = await this.business.getCatalog();
       return res.status(200).send(catalog);
     } catch (error) {
-      return res
-        .status(400)
-        .send({ message: 'No se puedo obtener el catalago' });
+      return res.status(400).send({ message: 'No se puedo obtener el catalago' });
     }
   };
 }

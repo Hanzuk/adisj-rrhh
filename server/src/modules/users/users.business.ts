@@ -3,43 +3,25 @@ import { IUser } from './models/user.interface';
 import { IAddress } from './models/address.interface';
 import { IPhone } from './models/phone.interface';
 import { ISalary } from './models/salary.interface';
-import {
-  ITemporaryUser,
-  ITemporaryContract,
-} from './models/temporary.interface';
+import { ITemporaryUser, ITemporaryContract } from './models/temporary.interface';
 import { Rol } from '../../utils/enums';
 
 export class UsersBusiness {
   constructor(private repository: UsersRepository = new UsersRepository()) {}
 
-  async saveEmployee(
-    employeeData: IUser,
-    addressData: IAddress,
-    phonesData: IPhone[],
-    salaryData: ISalary
-  ) {
-    const employeeId = await this.repository.saveEmployeeBasic(employeeData);
-
-    addressData.id_empleado = employeeId;
-    for (const phone of phonesData) {
-      phone.id_empleado = employeeId;
-      phone.activo = true;
-    }
-    salaryData.id_empleado = employeeId;
-
-    await this.repository.saveEmployeeAddres(addressData);
-    await this.repository.saveEmployeePhones(phonesData);
-    await this.repository.saveEmployeeSalary(salaryData);
-
-    return employeeId;
+  async savePermanent(basic: IUser, address: IAddress, phones: IPhone[], salary: ISalary) {
+    await this.repository.savePermanent(basic, address, phones, salary);
   }
 
   async saveTemporaryEmployee(
-    temporaryEmployee: ITemporaryUser,
-    contractData: ITemporaryContract
+    basic: IUser,
+    address: IAddress,
+    phones: IPhone[],
+    salary: ISalary,
+    temp: ITemporaryUser,
+    contract: ITemporaryContract
   ) {
-    await this.repository.saveTemporaryEmployee(temporaryEmployee);
-    await this.repository.saveTemporaryContract(contractData);
+    await this.repository.saveTemporary(basic, address, phones, salary, temp, contract);
   }
 
   async getEmployee(userId: number) {
@@ -62,10 +44,9 @@ export class UsersBusiness {
     },
     salaryData: { salario_hora: number; jornada: number }
   ) {
-    const salary = await this.repository.getEmployeeSalary(userId);
+    const { salario_hora } = await this.repository.getOneEmployee(userId);
 
-    if (salaryData.salario_hora > salary.salario_hora)
-      throw new Error('Los aumentos al salario no se pueden realizar aqui');
+    if (salaryData.salario_hora > salario_hora) throw new Error('Los aumentos al salario no se pueden realizar aqui');
 
     await this.repository.updateEmployeeBasic(userId, basicData);
     await this.repository.updateEmployeeSalary(userId, salaryData);

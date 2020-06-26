@@ -25,28 +25,16 @@ export class UsersModule {
     this.router.post('/', Auth.role([Rol.Admin]), this.controller.newUser);
 
     // Crea un nuevo empleado temporal
-    this.router.post(
-      '/temporary',
-      Auth.role([Rol.Admin]),
-      this.controller.newTemporaryUser
-    );
+    this.router.post('/temporary', Auth.role([Rol.Admin]), this.controller.newTemporaryUser);
 
     //Actualiza la informacion de un empleado
-    this.router.put(
-      '/:userId',
-      Auth.role([Rol.Admin]),
-      this.controller.updateEmployee
-    );
+    this.router.put('/:userId', Auth.role([Rol.Admin]), this.controller.updateEmployee);
 
     //Empleado cualquiera actuliza su informacion de contacto
     // this.router.put('/:userId/contact', this.controller.updateContact);
 
     //Re-contrata un empleado temporal
-    this.router.put(
-      '/:userId/re-hire',
-      Auth.role([Rol.Admin]),
-      this.controller.rehire
-    );
+    this.router.put('/:userId/re-hire', Auth.role([Rol.Admin]), this.controller.rehire);
 
     this.router.get('/catalogues/address', this.controller.catalogues);
 
