@@ -1,28 +1,42 @@
 <template>
   <div>
-    <h1 class="title is-4">Información personal</h1>
-    <h2 class="subtitle is-6">Ingresa los datos personales del nuevo empleado</h2>
+    <h1 class="title is-4">Información básica</h1>
+    <h2 class="subtitle is-6">Completa los datos personales del nuevo empleado</h2>
     <div class="columns">
-      <ValidationProvider rules="required|dni:9" v-slot="{ errors, valid }" tag="div" class="column">
+      <ValidationProvider
+        :rules="{ required: true, dni: /^[0-9]{1}-[0-9]{4}-[0-9]{4}$/ }"
+        v-slot="{ errors, valid }"
+        tag="div"
+        class="column"
+      >
         <b-field
           label="Número de cédula"
           :message="errors"
           :type="{ 'is-danger': errors[0], 'is-success': valid }"
-          icon-pack="boxicons"
           expanded
         >
-          <b-input v-model="dni" @input="sendDataToParent" maxlength="9" :has-counter="false"></b-input>
+          <b-input v-model="dni" @input="sendDataToParent" v-cleave="masks.custom" @input.native="setRawDNI"></b-input>
         </b-field>
       </ValidationProvider>
 
-      <ValidationProvider rules="required" v-slot="{ errors, valid }" tag="div" class="column">
+      <ValidationProvider
+        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\s]*$/ }"
+        v-slot="{ errors, valid }"
+        tag="div"
+        class="column"
+      >
         <b-field label="Nombre" :message="errors" :type="{ 'is-danger': errors[0], 'is-success': valid }" expanded>
-          <b-input v-model="name" @input="sendDataToParent"></b-input>
+          <b-input v-model="name" @input.native="sendDataToParent"></b-input>
         </b-field>
       </ValidationProvider>
     </div>
     <div class="columns">
-      <ValidationProvider rules="required" v-slot="{ errors, valid }" tag="div" class="column">
+      <ValidationProvider
+        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\s]*$/ }"
+        v-slot="{ errors, valid }"
+        tag="div"
+        class="column"
+      >
         <b-field
           label="Primer apellido"
           :message="errors"
@@ -32,11 +46,16 @@
           }"
           expanded
         >
-          <b-input v-model="fLastname" @input="sendDataToParent"></b-input>
+          <b-input v-model="fLastname" @input.native="sendDataToParent"></b-input>
         </b-field>
       </ValidationProvider>
 
-      <ValidationProvider rules="required" v-slot="{ errors, valid }" tag="div" class="column">
+      <ValidationProvider
+        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\s]*$/ }"
+        v-slot="{ errors, valid }"
+        tag="div"
+        class="column"
+      >
         <b-field
           label="Segundo apellido"
           :message="errors"
@@ -46,7 +65,7 @@
           }"
           expanded
         >
-          <b-input v-model="sLastname" @input="sendDataToParent"></b-input>
+          <b-input v-model="sLastname" @input.native="sendDataToParent"></b-input>
         </b-field>
       </ValidationProvider>
     </div>
@@ -59,7 +78,7 @@
             :month-names="monthNames"
             :first-day-of-week="1"
             placeholder="Seleccionar fecha..."
-            @input="sendDataToParent"
+            @input.native="sendDataToParent"
           >
           </b-datepicker>
         </b-field>
@@ -80,6 +99,7 @@ export default {
   data() {
     return {
       dni: '',
+      rawDNI: '',
       name: '',
       fLastname: '',
       sLastname: '',
@@ -99,12 +119,23 @@ export default {
         'Noviembre',
         'Diciembre',
       ],
+      masks: {
+        custom: {
+          delimiters: ['-', '-', '-'],
+          blocks: [1, 4, 4],
+          numericOnly: true,
+          rawValueTrimPrefix: true,
+        },
+      },
     };
   },
   methods: {
+    setRawDNI(event) {
+      this.rawDNI = event.target._vCleave == undefined ? this.dni : event.target._vCleave.getRawValue();
+    },
     sendDataToParent() {
       this.$emit('basic-data', {
-        cedula: this.dni,
+        cedula: this.rawDNI,
         nombre: this.name,
         p_apellido: this.fLastname,
         s_apellido: this.sLastname,

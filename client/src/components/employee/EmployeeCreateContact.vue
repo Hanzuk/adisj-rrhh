@@ -1,8 +1,8 @@
 <template>
-  <div class="contact-info">
+  <div>
     <h1 class="title is-4">Información de contacto</h1>
     <h2 class="subtitle is-6">
-      Ingresa los datos de domicilio y teléfonos
+      Completa los datos de domicilio e ingresa números de teléfono
     </h2>
     <div class="columns">
       <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column">
@@ -42,7 +42,7 @@
 
     <div class="columns">
       <ValidationProvider
-        :rules="{ required: true, address: /^[a-zA-ZA-zÀ-ú0-9.,\s]*$/ }"
+        :rules="{ required: true, address: /^[a-zA-Z0-9 .,]*$/ }"
         v-slot="{ errors, valid }"
         tag="div"
         class="column"
@@ -70,9 +70,20 @@
           </b-select>
         </b-field>
       </ValidationProvider>
-      <ValidationProvider rules="required|phone:8" v-slot="{ errors }" tag="div" class="column is-6">
-        <b-field :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
-          <b-input v-model="phone" @input="sendDataToParent" maxlength="8" expanded></b-input>
+      <ValidationProvider
+        :rules="{ required: true, phone: /^\+506\s{1}[0-9]{4}-[0-9]{4}$/ }"
+        v-slot="{ errors, valid }"
+        tag="div"
+        class="column is-6"
+      >
+        <b-field :message="errors" :type="{ 'is-danger': errors[0], 'is-success': valid }" expanded>
+          <b-input
+            v-model="phone"
+            @input="sendDataToParent"
+            v-cleave="masks.custom"
+            @input.native="setRawPhone"
+            expanded
+          ></b-input>
         </b-field>
       </ValidationProvider>
 
@@ -81,28 +92,19 @@
       </div>
     </ValidationObserver>
 
-    <b-field v-for="(phone, key) in phones" :key="phone.id">
-      <p class="control">
-        <span class="button is-static">
-          <b-icon :icon="phone.type === 1 ? 'cellphone-iphone' : 'phone-classic'"></b-icon>
-        </span>
-      </p>
-      <p class="control">
-        <span class="button is-static">{{ phone.phone }}</span>
-      </p>
-      <p class="control">
-        <b-button type="is-danger" @click="$delete(phones, key)" icon-right="delete" />
-      </p>
+    <b-field grouped group-multiline>
+      <div v-for="(phone, key) in phones" :key="phone.id" class="control">
+        <b-tag type="is-primary" size="is-medium" attached closable @close="removePhone(phones, key)">
+          {{ phone.toShow }}
+        </b-tag>
+      </div>
     </b-field>
   </div>
 </template>
 
 <script>
-// import { required, numeric, minLength, helpers } from 'vuelidate/lib/validators';
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import { mapState } from 'vuex';
-
-// const spacedAlphaNum = helpers.regex('spacedAlphaNum', );
 
 export default {
   name: 'EmployeeContact',
@@ -114,12 +116,22 @@ export default {
     return {
       type: null,
       phone: '',
+      rawPhone: '',
       phones: [],
       province: null,
       canton: null,
       district: null,
       address: '',
       nextPhoneId: 0,
+      masks: {
+        custom: {
+          prefix: '+506',
+          delimiters: [' ', '-', '-'],
+          blocks: [4, 4, 4],
+          numericOnly: true,
+          rawValueTrimPrefix: true,
+        },
+      },
     };
   },
   computed: {
@@ -137,10 +149,19 @@ export default {
     addPhone() {
       this.phones.push({
         id: this.nextPhoneId++,
-        phone: this.phone,
+        phone: this.rawPhone,
+        toShow: this.phone,
         type: parseInt(this.type),
       });
       this.sendDataToParent();
+    },
+    removePhone(phones, key) {
+      this.$delete(phones, key);
+      this.phones.splice(key);
+      this.sendDataToParent();
+    },
+    setRawPhone(event) {
+      this.rawPhone = event.target._vCleave.getRawValue();
     },
     sendDataToParent() {
       this.$emit('contact-data', {

@@ -1,4 +1,4 @@
-import { required, digits, regex, confirmed, numeric } from 'vee-validate/dist/rules';
+import { required, regex, confirmed, numeric } from 'vee-validate/dist/rules';
 import { extend } from 'vee-validate';
 
 extend('required', {
@@ -6,13 +6,18 @@ extend('required', {
   message: 'Este campo es requerido.',
 });
 
+extend('alpha_spaces', {
+  ...regex,
+  message: 'Solo letras y espacios.',
+});
+
 extend('dni', {
-  ...digits,
+  ...regex,
   message: 'El formato para la cédula es incorrecto.',
 });
 
 extend('phone', {
-  ...digits,
+  ...regex,
   message: 'El formato para el teléfono es incorrecto.',
 });
 
@@ -45,18 +50,3 @@ extend('numeric', {
   ...numeric,
   message: 'Solo caracteres númericos.',
 });
-
-// extend('email', {
-//   ...email,
-//   message: 'This field must be a valid email',
-// });
-
-// extend('confirmed', {
-//   ...confirmed,
-//   message: 'This field confirmation does not match',
-// });
-
-// extend('length', {
-//   ...length,
-//   message: 'This field must have 2 options',
-// });

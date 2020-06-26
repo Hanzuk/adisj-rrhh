@@ -2,7 +2,7 @@
   <div>
     <h1 class="title is-4">Credenciales</h1>
     <h2 class="subtitle is-6">
-      Ingresa las credenciales que tendrá el empleado para ingresar al sistema
+      Crea las credenciales que tendrá el empleado para ingresar al sistema
     </h2>
     <div class="columns">
       <ValidationProvider

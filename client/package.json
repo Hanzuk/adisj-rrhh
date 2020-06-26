@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "buefy": "^0.8.20",
+    "cleave.js": "^1.6.0",
     "core-js": "^3.6.5",
     "date-fns": "^2.14.0",
     "jsonwebtoken": "^8.5.1",
