@@ -2,50 +2,39 @@
   <div class="login columns is-centered is-vcentered">
     <div class="column is-one-quarter">
       <h1 class="title has-text-centered">Inicio de sesión</h1>
-      <b-field
-        label="Correo electrónico"
-        :message="[
-          { 'Correo electrónico inválido': !$v.email.email && $v.email.$error },
-          { 'Este campo es requerido': !$v.email.required && $v.email.$error },
-        ]"
-        :type="{ 'is-danger': $v.email.$error }"
-      >
-        <b-input v-model="email" @blur="$v.email.$touch()"></b-input>
-      </b-field>
-      <b-field
-        label="Contraseña"
-        :message="[
-          {
-            'La contraseña debe contener almenos 10 caracteres': !$v.password.minLength && $v.password.$error,
-          },
-          {
-            'Este campo es requerido': !$v.password.required && $v.password.$error,
-          },
-        ]"
-        :type="{ 'is-danger': $v.password.$error }"
-      >
-        <b-input type="password" v-model="password" @blur="$v.password.$touch()" password-reveal></b-input>
-      </b-field>
-      <b-button type="is-primary" @click="login" :disabled="$v.$invalid" expanded>Iniciar sesión</b-button>
+      <ValidationObserver ref="observer" v-slot="{ invalid }">
+        <ValidationProvider rules="required" v-slot="{ errors }">
+          <b-field label="Correo electrónico" :message="errors" :type="{ 'is-danger': errors[0] }">
+            <b-input v-model="email"></b-input>
+          </b-field>
+        </ValidationProvider>
+
+        <ValidationProvider rules="required" v-slot="{ errors }">
+          <b-field label="Contraseña" :message="errors" :type="{ 'is-danger': errors[0] }">
+            <b-input type="password" v-model="password" password-reveal></b-input>
+          </b-field>
+        </ValidationProvider>
+        <b-button type="is-primary" @click="login" :disabled="invalid" expanded>Iniciar sesión</b-button>
+      </ValidationObserver>
     </div>
     <div ref="element"></div>
   </div>
 </template>
 
 <script>
-import { required, email, minLength } from 'vuelidate/lib/validators';
+import { ValidationObserver, ValidationProvider } from 'vee-validate';
 
 export default {
   name: 'Login',
+  components: {
+    ValidationObserver,
+    ValidationProvider,
+  },
   data() {
     return {
       email: '',
       password: '',
     };
-  },
-  validations: {
-    email: { required, email },
-    password: { required, minLength: minLength(2) },
   },
   methods: {
     async login() {
