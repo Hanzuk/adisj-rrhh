@@ -18,7 +18,10 @@ new Vue({
     const token = localStorage.getItem('jwt');
     if (token) {
       const decoded = decode(token);
-      if (new Date() > decoded.exp) return this.$store.commit('auth/CLEAR_TOKEN');
+      //https://github.com/auth0/node-jsonwebtoken#token-expiration-exp-claim
+      if (Math.floor(Date.now() / 1000) > decoded.exp) {
+        return this.$store.commit('auth/CLEAR_TOKEN');
+      }
       this.$store.commit('auth/SET_TOKEN', token);
     }
   },
