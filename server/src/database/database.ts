@@ -1,29 +1,22 @@
-import { Pool, PoolConnection, createPool, QueryFunction } from 'mysql';
+import { Pool, PoolConnection, createPool } from 'mysql';
 
 class Database {
   private pool: Pool;
   private connection: PoolConnection;
 
   constructor() {
-    this.init();
-  }
-
-  private async init(): Promise<void> {
-    this.pool = await this.createPool();
-    this.connection = await this.getPoolConnection();
-  }
-
-  private createPool(): Promise<Pool> {
-    return new Promise((resolve, reject) => {
-      const p: Pool = createPool({
-        host: 'localhost',
-        user: 'root',
-        password: 'admin',
-        database: 'adisj',
-      });
-
-      return p ? resolve(p) : reject(new Error('Error connecting to database'));
+    this.pool = createPool({
+      host: 'localhost',
+      user: 'root',
+      password: 'admin',
+      database: 'adisj',
     });
+
+    this.setConnection();
+  }
+
+  private async setConnection(): Promise<void> {
+    this.connection = await this.getPoolConnection();
   }
 
   private getPoolConnection(): Promise<PoolConnection> {
@@ -34,10 +27,36 @@ class Database {
     });
   }
 
-  public query(query: string, values: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+  public query(query: string, values: string | number | Array<any> | object) {
+    return new Promise<any>((resolve, reject) => {
       this.connection.query(query, values, (err, results) => {
-        return err ? reject(err) : resolve(results);
+        if (err) return reject(err);
+        return resolve(results);
+      });
+    });
+  }
+
+  public async startTransaction() {
+    return new Promise<void>((resolve, reject) => {
+      this.connection.beginTransaction((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  }
+  public async rollbackTransaction() {
+    return new Promise<void>((resolve, reject) => {
+      this.connection.rollback((err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  }
+  public async commitTransaction() {
+    return new Promise<void>((resolve, reject) => {
+      this.connection.commit((err) => {
+        if (err) return reject(err);
+        resolve();
       });
     });
   }
