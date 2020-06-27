@@ -1,24 +1,49 @@
 <template>
   <div class="container">
     <Navbar />
-    <div class="columns is-centered">
-      <div class="column is-two-fifths">
-        <h3 class="title is-3">Información del empleado</h3>
-        <div class="basic-info">
+    <div class="mt-10">
+      <div class="columns">
+        <div class="column">
+          <h3 class="title is-3">Información del empleado</h3>
+        </div>
+        <div class="column">
+          <b-field position="is-right" grouped>
+            <div class="control">
+              <button class="button is-primary">
+                Editar
+              </button>
+            </div>
+            <div class="control">
+              <button class="button is-danger" @click="openModal">
+                Despedir
+              </button>
+            </div>
+          </b-field>
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column">
           <h1 class="title is-4">Básica</h1>
           <b-field grouped>
             <b-field label="Número de cédula" expanded>
-              <p>{{ employee.cedula }}</p>
+              <div class="flex">
+                <b-icon icon="card-account-details"></b-icon>
+                <span class="ml-2">{{ dniFormatted }}</span>
+              </div>
             </b-field>
             <b-field label="Nombre completo" expanded>
               <p>{{ fullname }}</p>
             </b-field>
           </b-field>
-          <b-field label="Fecha de nacimiento">
-            <p>{{ bornDate }}</p>
+
+          <b-field label="Fecha de nacimiento" expanded>
+            <div class="flex">
+              <b-icon icon="cake-variant"></b-icon>
+              <span class="ml-2">{{ bornDate }}</span>
+            </div>
           </b-field>
         </div>
-        <div class="contact-info">
+        <div class="column">
           <h1 class="title is-4">Contacto</h1>
           <b-field label="Correo electrónico" expanded>
             <div class="flex">
@@ -48,38 +73,36 @@
             <p>{{ employee.direccion.direccion }}</p>
           </b-field>
         </div>
-        <div class="work-info">
+        <div class="column">
           <h1 class="title is-4">Laboral</h1>
-          <b-field grouped>
-            <b-field label="Contratado el" expanded>
-              <b-taglist attached>
-                <b-tag type="is-dark">{{ contractDate }}</b-tag>
-                <b-tag type="is-info">Hace {{ contractAgo }}</b-tag>
-              </b-taglist>
-            </b-field>
-            <b-field label="Salario por hora" expanded>
-              <p>{{ salary }}</p>
-            </b-field>
-            <b-field label="Jornada" expanded>
-              <p>{{ employee.jornada }}</p>
-            </b-field>
-            <b-field label="Tipo de empleado" expanded>
-              <p>{{ employee.tipo_empleado }}</p>
-            </b-field>
-          </b-field>
+          <div class="columns">
+            <div class="column">
+              <b-field label="Contratado el" expanded>
+                <b-taglist attached>
+                  <b-tag type="is-dark">{{ contractDate }}</b-tag>
+                  <b-tag type="is-primary">Hace {{ contractAgo }}</b-tag>
+                </b-taglist>
+              </b-field>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="column">
+              <b-field label="Salario por hora" expanded>
+                <p>{{ salary }}</p>
+              </b-field>
+            </div>
+            <div class="column">
+              <b-field label="Jornada" expanded>
+                <p>{{ employee.jornada }}</p>
+              </b-field>
+            </div>
+            <div class="column">
+              <b-field label="Tipo de empleado" expanded>
+                <p>{{ type }}</p>
+              </b-field>
+            </div>
+          </div>
         </div>
-        <b-field position="is-right" grouped>
-          <div class="control">
-            <button class="button is-primary">
-              Editar
-            </button>
-          </div>
-          <div class="control">
-            <button class="button is-danger" @click="fire">
-              Despedir
-            </button>
-          </div>
-        </b-field>
       </div>
     </div>
   </div>
@@ -87,6 +110,7 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
+import EmployeeFire from '@/components/employee/EmployeeFire.vue';
 import { mapState, mapGetters } from 'vuex';
 import store from '@/store';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -95,8 +119,8 @@ import numeral from 'numeral';
 
 numeral.register('locale', 'cr', {
   delimiters: {
-    thousands: '.',
-    decimal: ',',
+    thousands: ',',
+    decimal: '.',
   },
   abbreviations: {
     thousand: 'k',
@@ -108,7 +132,7 @@ numeral.register('locale', 'cr', {
     return number === 1 ? 'er' : 'ème';
   },
   currency: {
-    symbol: '₡',
+    symbol: '₡ ',
   },
 });
 
@@ -118,6 +142,12 @@ export default {
     Navbar,
   },
   props: ['userId'],
+  data() {
+    return {
+      showModal: false,
+      description: '',
+    };
+  },
   async beforeRouteEnter(to, from, next) {
     await store.dispatch('employees/fetchEmployee', to.params.userId);
     next();
@@ -126,7 +156,7 @@ export default {
     ...mapState({
       employee: state => state.employees.employee,
     }),
-    ...mapGetters('employees', ['fullname']),
+    ...mapGetters('employees', ['fullname', 'type', 'dniFormatted']),
     bornDate() {
       return format(new Date(this.employee.fecha_nacimiento), 'dd/MM/yyyy');
     },
@@ -147,14 +177,15 @@ export default {
     formatPhone(phone) {
       return phone.substr(0, 4) + '-' + phone.substr(4, 7);
     },
-    fire() {
-      this.$buefy.dialog.confirm({
-        title: 'Despedir empleado',
-        message: '¿Seguro que quieres <b>despedir</b> a este empleado? Esta acción no se puede revertir.',
-        confirmText: 'Despedir',
-        type: 'is-danger',
-        hasIcon: true,
-        onConfirm: () => this.$buefy.toast.open('¡Empleado despedido!'),
+    openModal() {
+      this.$buefy.modal.open({
+        parent: this,
+        component: EmployeeFire,
+        hasModalCard: true,
+        trapFocus: true,
+        props: {
+          employeeId: parseInt(this.$route.params.userId),
+        },
       });
     },
   },

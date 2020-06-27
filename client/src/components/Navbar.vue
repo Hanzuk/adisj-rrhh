@@ -16,8 +16,9 @@
     <template slot="end">
       <b-navbar-item tag="div">
         <div class="buttons">
-          <button class="button is-primary" @click="logout">
-            <strong>Cerrar sesión</strong>
+          <button class="button is-light" @click="logout">
+            <b-icon icon="logout"></b-icon>
+            <span>Cerrar sesión</span>
           </button>
         </div>
       </b-navbar-item>

@@ -35,8 +35,27 @@ export const actions = {
   },
 };
 
+const types = new Map([
+  [1, 'Administrador'],
+  [2, 'Secretario'],
+  [3, 'Chofer'],
+  [4, 'Temporal'],
+]);
+
 export const getters = {
   fullname(state) {
     return `${state.employee.nombre} ${state.employee.p_apellido} ${state.employee.s_apellido}`;
+  },
+  type(state) {
+    return types.get(state.employee.tipo_empleado);
+  },
+  dniFormatted(state) {
+    return (
+      state.employee.cedula.slice(0, 1) +
+      '-' +
+      state.employee.cedula.slice(1, 4) +
+      '-' +
+      state.employee.cedula.slice(4, 8)
+    );
   },
 };

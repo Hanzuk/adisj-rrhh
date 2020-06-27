@@ -1,45 +1,47 @@
 <template>
   <div class="container">
     <Navbar />
-    <div class="columns is-centered">
-      <div class="column is-three-fifths">
-        <h3 class="title is-3">Empleados laborando en la empresa</h3>
-        <b-table :data="employees.employees" :striped="true" :mobile-cards="true">
-          <template slot-scope="props">
-            <b-table-column field="id" label="ID" width="40" numeric>
-              {{ props.row.id }}
-            </b-table-column>
-            <b-table-column field="name" label="Nombre empleado">
-              {{ `${props.row.nombre} ${props.row.p_apellido} ${props.row.s_apellido}` }}
-            </b-table-column>
-            <b-table-column field="date" label="Fecha de contrato" centered>
-              <b-tag type="is-primary">{{ formatDate(props.row.fecha_contrato) }}</b-tag>
-            </b-table-column>
-            <b-table-column field="type" label="Tipo de empleado">
-              {{ props.row.tipo_empleado }}
-            </b-table-column>
-            <b-table-column field="more" label="Más información" centered>
-              <router-link
-                :to="{
-                  name: 'employee-show',
-                  params: { userId: props.row.id },
-                }"
-                >Ver</router-link
-              >
-            </b-table-column>
-          </template>
+    <div class="mt-10">
+      <div class="columns is-centered">
+        <div class="column is-three-fifths">
+          <h3 class="title is-3">Empleados laborando en la empresa</h3>
+          <b-table :data="employees.employees" :striped="true" :mobile-cards="true">
+            <template slot-scope="props">
+              <b-table-column field="id" label="ID" width="40" numeric>
+                {{ props.row.id }}
+              </b-table-column>
+              <b-table-column field="name" label="Nombre empleado">
+                {{ `${props.row.nombre} ${props.row.p_apellido} ${props.row.s_apellido}` }}
+              </b-table-column>
+              <b-table-column field="date" label="Fecha de contrato" centered>
+                <b-tag type="is-primary">{{ formatDate(props.row.fecha_contrato) }}</b-tag>
+              </b-table-column>
+              <b-table-column field="type" label="Tipo de empleado">
+                {{ props.row.tipo_empleado }}
+              </b-table-column>
+              <b-table-column field="more" label="Más información" centered>
+                <router-link
+                  :to="{
+                    name: 'employee-show',
+                    params: { userId: props.row.id },
+                  }"
+                  >Ver</router-link
+                >
+              </b-table-column>
+            </template>
 
-          <template slot="empty">
-            <section class="section">
-              <div class="content has-text-grey has-text-centered">
-                <p>
-                  <b-icon icon="emoticon-sad" size="is-large"> </b-icon>
-                </p>
-                <p>Nothing here.</p>
-              </div>
-            </section>
-          </template>
-        </b-table>
+            <template slot="empty">
+              <section class="section">
+                <div class="content has-text-grey has-text-centered">
+                  <p>
+                    <b-icon icon="emoticon-sad" size="is-large"> </b-icon>
+                  </p>
+                  <p>Nothing here.</p>
+                </div>
+              </section>
+            </template>
+          </b-table>
+        </div>
       </div>
     </div>
   </div>

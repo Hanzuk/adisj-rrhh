@@ -29,4 +29,7 @@ export default {
   async postTemporary(data) {
     return await api.post(`/users/temporary`, data);
   },
+  async deleteEmployee(userId, data) {
+    return await api.delete(`/users/${userId}`, { data });
+  },
 };

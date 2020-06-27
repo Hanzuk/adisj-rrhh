@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <Navbar />
-    {{ newEmployeeData }}
-    <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="section">
+    <!-- {{ newEmployeeData }} -->
+    <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="mt-10">
       <div class="columns">
         <div class="column">
           <EmployeeBasic @basic-data="setBasic" />

@@ -39,10 +39,6 @@ export class UsersModule {
     this.router.get('/catalogues/address', this.controller.catalogues);
 
     //Elimina un empleado especifico
-    // this.router.delete(
-    //   '/:userId',
-    //   Auth.role([Rol.Admin]),
-    //   this.controller.delete
-    // );
+    this.router.delete('/:userId', Auth.role([Rol.Admin]), this.controller.delete);
   }
 }
