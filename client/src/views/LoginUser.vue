@@ -1,24 +1,31 @@
 <template>
-  <div class="login columns is-centered is-vcentered">
+  <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="login columns is-centered is-vcentered">
     <div class="column is-one-quarter">
-      <h1 class="title has-text-centered">Inicio de sesión</h1>
-      <ValidationObserver ref="observer" v-slot="{ invalid }">
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <b-field label="Correo electrónico" :message="errors" :type="{ 'is-danger': errors[0] }">
-            <b-input v-model="email"></b-input>
-          </b-field>
-        </ValidationProvider>
-
-        <ValidationProvider rules="required" v-slot="{ errors }">
-          <b-field label="Contraseña" :message="errors" :type="{ 'is-danger': errors[0] }">
-            <b-input type="password" v-model="password" password-reveal></b-input>
-          </b-field>
-        </ValidationProvider>
-        <b-button type="is-primary" @click="login" :disabled="invalid" expanded>Iniciar sesión</b-button>
-      </ValidationObserver>
+      <div class="columns is-multiline">
+        <div class="column is-full">
+          <h1 class="title has-text-centered">Inicio de sesión</h1>
+        </div>
+        <div class="column is-full">
+          <ValidationProvider rules="required" v-slot="{ errors }" tag="div">
+            <b-field label="Correo electrónico" :message="errors" :type="{ 'is-danger': errors[0] }">
+              <b-input v-model="email"></b-input>
+            </b-field>
+          </ValidationProvider>
+        </div>
+        <div class="column is-full">
+          <ValidationProvider rules="required" v-slot="{ errors }" tag="div">
+            <b-field label="Contraseña" :message="errors" :type="{ 'is-danger': errors[0] }">
+              <b-input type="password" v-model="password" password-reveal></b-input>
+            </b-field>
+          </ValidationProvider>
+        </div>
+        <div class="column is-full">
+          <b-button type="is-primary" @click="login" :disabled="invalid" expanded>Iniciar sesión</b-button>
+        </div>
+      </div>
     </div>
     <div ref="element"></div>
-  </div>
+  </ValidationObserver>
 </template>
 
 <script>

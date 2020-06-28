@@ -9,6 +9,10 @@
   height: 100vh;
 }
 
+.items-center {
+  align-items: center;
+}
+
 .flex {
   display: flex;
 }
