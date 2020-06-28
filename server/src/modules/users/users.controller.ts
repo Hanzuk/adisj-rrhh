@@ -9,6 +9,7 @@ import { IPhone } from './models/phone.interface';
 import { IAddress } from './models/address.interface';
 import { ISalary } from './models/salary.interface';
 import { ITemporaryUser, ITemporaryContract } from './models/temporary.interface';
+import { RequiredFieldsError } from '../../utils/errors/RequestFieldsError';
 
 export class UsersController {
   constructor(private business: UsersBusiness = new UsersBusiness()) {}
@@ -18,33 +19,49 @@ export class UsersController {
       return res.status(400).send({ message: 'Demasiados datos para este tipo de empleado' });
     }
 
-    const userData: IUser = {
-      cedula: req.body.cedula,
-      nombre: req.body.nombre,
-      p_apellido: req.body.p_apellido,
-      s_apellido: req.body.s_apellido,
-      fecha_nacimiento: req.body.fecha_nacimiento,
-      correo: req.body.correo,
-      clave: await hash(req.body.clave, 10),
-      activo: req.body.activo,
-      tipo_empleado: req.body.tipo_empleado,
-    };
-
-    const phonesData: IPhone[] = req.body.telefonos;
-    const addressData: IAddress = {
-      id_empleado: 0,
-      codigo_provincia: req.body.direccion.provincia,
-      codigo_canton: req.body.direccion.canton,
-      codigo_distrito: req.body.direccion.distrito,
-      direccion: req.body.direccion.direccion,
-    };
-    const salaryData: ISalary = {
-      id_empleado: 0,
-      salario_hora: req.body.salario_hora,
-      jornada: req.body.jornada,
-    };
-
     try {
+      if (!req.body.hasOwnProperty('cedula')) throw new RequiredFieldsError('La cedula es requerida');
+      if (!req.body.hasOwnProperty('nombre')) throw new RequiredFieldsError('El nombre es requerido');
+      if (!req.body.hasOwnProperty('p_apellido')) throw new RequiredFieldsError('El primer apellido es requerido');
+      if (!req.body.hasOwnProperty('s_apellido')) throw new RequiredFieldsError('El segundo apellido es requerido');
+      if (!req.body.hasOwnProperty('fecha_nacimiento'))
+        throw new RequiredFieldsError('La fecha de nacimiento es requerida');
+      if (!req.body.hasOwnProperty('correo')) throw new RequiredFieldsError('El correo es requerido');
+      if (!req.body.hasOwnProperty('clave')) throw new RequiredFieldsError('La clave es requerida');
+      if (!req.body.hasOwnProperty('tipo_empleado')) throw new RequiredFieldsError('El tipo de empleado es requerido');
+      if (!req.body.hasOwnProperty('telefonos')) throw new RequiredFieldsError('Al menos un telefono es requerido');
+      if (!req.body.hasOwnProperty('direccion')) throw new RequiredFieldsError('La direccion es requerida');
+      if (!req.body.hasOwnProperty('salario_hora')) throw new RequiredFieldsError('El salario por hora es requerido');
+      if (!req.body.hasOwnProperty('jornada')) throw new RequiredFieldsError('La jornada es requerida');
+
+      const userData: IUser = {
+        cedula: req.body.cedula,
+        nombre: req.body.nombre,
+        p_apellido: req.body.p_apellido,
+        s_apellido: req.body.s_apellido,
+        fecha_nacimiento: req.body.fecha_nacimiento,
+        correo: req.body.correo,
+        clave: await hash(req.body.clave, 10),
+        activo: true,
+        tipo_empleado: req.body.tipo_empleado,
+      };
+
+      if (req.body.telefonos.length === 0) throw new RequiredFieldsError('Al menos un telefono es requerido');
+
+      const phonesData: IPhone[] = req.body.telefonos;
+      const addressData: IAddress = {
+        id_empleado: 0,
+        codigo_provincia: req.body.direccion.provincia,
+        codigo_canton: req.body.direccion.canton,
+        codigo_distrito: req.body.direccion.distrito,
+        direccion: req.body.direccion.direccion,
+      };
+      const salaryData: ISalary = {
+        id_empleado: 0,
+        salario_hora: req.body.salario_hora,
+        jornada: req.body.jornada,
+      };
+
       await this.business.savePermanent(userData, addressData, phonesData, salaryData);
 
       return res.status(201).send({
@@ -52,7 +69,6 @@ export class UsersController {
       });
     } catch (error) {
       return res.status(400).send({
-        message: 'No se pudo registrar el nuevo empleado',
         error,
       });
     }
