@@ -147,13 +147,24 @@ export default {
   },
   methods: {
     addPhone() {
-      this.phones.push({
-        id: this.nextPhoneId++,
-        phone: this.rawPhone,
-        toShow: this.phone,
-        type: parseInt(this.type),
+      console.log(this.phones.findIndex(phone => phone.phone === this.rawPhone));
+
+      if (this.phones.findIndex(phone => phone.phone === this.rawPhone) < 0) {
+        this.phones.push({
+          id: this.nextPhoneId++,
+          phone: this.rawPhone,
+          toShow: this.phone,
+          type: parseInt(this.type),
+        });
+        return this.sendDataToParent();
+      }
+
+      this.$buefy.toast.open({
+        duration: 2000,
+        message: 'Ya agregaste este número de teléfono',
+        position: 'is-bottom-left',
+        type: 'is-danger',
       });
-      this.sendDataToParent();
     },
     removePhone(phones, key) {
       this.$delete(phones, key);
