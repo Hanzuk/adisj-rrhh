@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import { decode } from 'jsonwebtoken';
 import employeeRoutes from '@/router/employee.js';
+import permitRoutes from '@/router/permit.js';
 
 Vue.use(VueRouter);
 
@@ -24,6 +25,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
   },
   ...employeeRoutes,
+  ...permitRoutes,
 ];
 
 const router = new VueRouter({
@@ -31,7 +33,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const loggedIn = localStorage.getItem('jwt');
+  const loggedIn = localStorage.getItem('user');
 
   //Si la ruta require autorizacion y no esta logueado
   if (to.matched.some(record => record.meta.requiresAuth) && !loggedIn) {
@@ -45,9 +47,9 @@ router.beforeEach((to, from, next) => {
   }
 
   if (loggedIn) {
-    const decoded = decode(loggedIn);
+    const decodedToken = decode(JSON.parse(loggedIn).token);
 
-    if (decoded.tipo_empleado !== 1 && to.matched.some(record => record.meta.adminOnly)) {
+    if (decodedToken.tipo_empleado !== 1 && to.matched.some(record => record.meta.adminOnly)) {
       return next({ name: 'dashboard' });
     }
   }
