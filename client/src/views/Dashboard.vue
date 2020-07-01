@@ -1,18 +1,17 @@
 <template>
   <div class="container">
-    <Navbar />
     <h1 class="title is-3">Dashboard</h1>
-    <h3 class="subtitle is-3">¡Bienvenido {user.name}!</h3>
+    <h3 class="subtitle is-3">¡Bienvenido {{ auth.user.nombre }}!</h3>
   </div>
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'Dashboard',
-  components: {
-    Navbar,
+  computed: {
+    ...mapState(['auth']),
   },
 };
 </script>
