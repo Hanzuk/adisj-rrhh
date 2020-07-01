@@ -44,6 +44,10 @@ export class LoginController {
       expiresIn: '1d',
     });
 
-    return res.status(200).send({ token });
+    return res.status(200).send({
+      nombre: credentials.nombre + ' ' + credentials.p_apellido,
+      tipo_empleado: credentials.tipo_empleado,
+      token,
+    });
   };
 }
