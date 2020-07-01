@@ -3,9 +3,7 @@ import { PermissionsBusiness } from './permissions.business';
 import { Rol } from '../../utils/enums';
 
 export class PermissionsController {
-  constructor(
-    private business: PermissionsBusiness = new PermissionsBusiness()
-  ) {}
+  constructor(private business: PermissionsBusiness = new PermissionsBusiness()) {}
 
   public create = async (req: Request, res: Response) => {
     const { titulo, descripcion, fecha_salida, horas } = req.body;
@@ -39,18 +37,19 @@ export class PermissionsController {
     try {
       const permissions = await this.business.findAll();
 
-      if (res.locals.authenticated.tipo_empleado !== Rol.Admin) {
+      if (parseInt(res.locals.authenticated.tipo_empleado) !== Rol.Admin) {
         return res
           .status(200)
           .send(
             permissions.filter(
               (permission) =>
-                permission.id_empleado === res.locals.authenticated.id
+                permission.id_empleado === parseInt(res.locals.authenticated.id) &&
+                Boolean(permission.solo_admin) === false
             )
           );
       }
 
-      return res.status(200).send(permissions);
+      return res.status(200).send(permissions.filter((permission) => Boolean(permission.activo) === true));
     } catch (error) {
       return res.status(404).send({
         status: 400,

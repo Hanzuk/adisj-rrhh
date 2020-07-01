@@ -32,4 +32,19 @@ export default {
   async deleteEmployee(userId, data) {
     return await api.delete(`/users/${userId}`, { data });
   },
+  async postPermit(data) {
+    return await api.post('/permissions', data);
+  },
+  async getPermits() {
+    return await api.get('/permissions');
+  },
+  async putPermit(permitId, data) {
+    return await api.put(`/permissions/${permitId}/mark-as`, data);
+  },
+  async putPermitEmployee(permitId, data) {
+    return await api.put(`/permissions/${permitId}`, data);
+  },
+  async deletePermit(permitId) {
+    return await api.delete(`/permissions/${permitId}`);
+  },
 };

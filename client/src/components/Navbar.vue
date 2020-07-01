@@ -1,5 +1,5 @@
 <template>
-  <b-navbar>
+  <b-navbar wrapper-class="container" :shadow="true" :fixed-top="true">
     <template slot="brand">
       <b-navbar-item tag="router-link" :to="{ name: 'dashboard' }">
         <img src="../assets/logo_adisj.jpg" alt="Asociación de Desarrollo Integral de San Juan Puriscal" />
@@ -11,9 +11,17 @@
         <b-navbar-item tag="router-link" :to="{ name: 'employee-create' }">Nuevo empleado</b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ name: 'employees' }">Información empleados</b-navbar-item>
       </b-navbar-dropdown>
+      <b-navbar-dropdown label="Permisos">
+        <b-navbar-item tag="router-link" :to="{ name: 'permit-create' }">Solicitar permiso</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'permits' }">Ver permisos</b-navbar-item>
+      </b-navbar-dropdown>
     </template>
 
     <template slot="end">
+      <b-navbar-item tag="router-link" :to="{ name: 'dashboard' }">
+        <b-icon icon="account-circle"></b-icon>
+        <span class="ml-2">Perfil</span>
+      </b-navbar-item>
       <b-navbar-item tag="div">
         <div class="buttons">
           <button class="button is-light" @click="logout">
