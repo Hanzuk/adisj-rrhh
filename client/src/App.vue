@@ -1,12 +1,24 @@
 <template>
   <div id="app">
+    <Navbar v-if="$route.name !== 'login'" />
     <router-view />
   </div>
 </template>
 
+<script>
+import Navbar from '@/components/Navbar.vue';
+
+export default {
+  name: 'App',
+  components: {
+    Navbar,
+  },
+};
+</script>
+
 <style>
-#app {
-  height: 100vh;
+html {
+  background-color: #f7fafc !important;
 }
 
 .items-center {
@@ -115,5 +127,9 @@
 }
 .ml-10 {
   margin-left: 2.5rem;
+}
+
+.leading-none {
+  line-height: 1;
 }
 </style>
