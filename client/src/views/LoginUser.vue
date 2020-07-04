@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="login columns is-centered is-vcentered">
+  <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="h-full columns is-centered is-vcentered">
     <div class="column is-one-quarter">
       <div class="columns is-multiline">
         <div class="column is-full">
@@ -71,9 +71,3 @@ export default {
   },
 };
 </script>
-
-<style lang="css">
-.login {
-  height: 100%;
-}
-</style>

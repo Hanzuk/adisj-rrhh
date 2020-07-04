@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Navbar v-if="$route.name !== 'login'" />
+    <Navbar v-if="show" />
     <router-view />
   </div>
 </template>
@@ -13,12 +13,23 @@ export default {
   components: {
     Navbar,
   },
+  computed: {
+    show() {
+      if (this.$route.name !== 'login' && this.$route.name !== 'vote') return true;
+
+      return false;
+    },
+  },
 };
 </script>
 
 <style>
 html {
   background-color: #f7fafc !important;
+}
+
+.h-full {
+  height: 100vh;
 }
 
 .items-center {

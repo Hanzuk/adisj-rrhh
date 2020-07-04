@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000/v1',
-  withCredentials: false,
+  withCredentials: true, //to true so the server can configure cookies
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -46,5 +46,32 @@ export default {
   },
   async deletePermit(permitId) {
     return await api.delete(`/permissions/${permitId}`);
+  },
+  async postOvertime(data) {
+    return await api.post('/overtime', data);
+  },
+  async getOvertime() {
+    return await api.get('/overtime');
+  },
+  async putOvertime(id, data) {
+    return await api.put(`/overtime/admin/${id}`, data);
+  },
+  async putOvertimeEmployee(id, data) {
+    return await api.put(`/overtime/${id}`, data);
+  },
+  async getDrivers() {
+    return await api.get('/quality/drivers');
+  },
+  async postQuality(data) {
+    return await api.post('/quality/vote', data);
+  },
+  async getRating() {
+    return await api.get('/quality/rating');
+  },
+  async getUserRating(userId) {
+    return await api.get(`/quality/rating/${userId}`);
+  },
+  async deleteVote(voteId) {
+    return await api.delete(`/quality/${voteId}/delete-vote`);
   },
 };

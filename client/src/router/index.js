@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import { decode } from 'jsonwebtoken';
 import employeeRoutes from '@/router/employee.js';
 import permitRoutes from '@/router/permit.js';
+import overtimeRoutes from '@/router/overtime.js';
 
 Vue.use(VueRouter);
 
@@ -24,8 +25,21 @@ const routes = [
     meta: { title: 'Inicio | Adisj', requiresAuth: true, adminOnly: false },
     component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
   },
+  {
+    path: '/calificar-servicio',
+    name: 'vote',
+    meta: { title: 'Calificar servicio | Adisj', requiresAuth: false },
+    component: () => import(/* webpackChunkName: "vote" */ '../views/Vote.vue'),
+  },
+  {
+    path: '/control-calidad',
+    name: 'quality-control',
+    meta: { title: 'Control de calidad | Adisj', requiresAuth: true, adminOnly: true },
+    component: () => import(/* webpackChunkName: "vote" */ '../views/QualityControl.vue'),
+  },
   ...employeeRoutes,
   ...permitRoutes,
+  ...overtimeRoutes,
 ];
 
 const router = new VueRouter({

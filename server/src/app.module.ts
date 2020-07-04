@@ -32,7 +32,8 @@ class AppModule {
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(helmet());
     this.app.use(compression());
-    this.app.use(cors());
+    //origin and credentials to set cookies in the browser
+    this.app.use(cors({ origin: 'http://localhost:8080', credentials: true }));
     this.app.use(cookieParser());
   }
 

@@ -8,4 +8,5 @@ export interface Overtime {
   descripcion?: string;
   fecha?: Date;
   activo?: boolean;
+  empleado?: string;
 }

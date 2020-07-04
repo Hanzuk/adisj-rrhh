@@ -58,4 +58,7 @@ export const getters = {
       state.employee.cedula.slice(4, 8)
     );
   },
+  getDrivers(state) {
+    return state.employees.filter(employee => employee.tipo_empleado === 3);
+  },
 };

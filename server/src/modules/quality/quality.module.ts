@@ -15,18 +15,10 @@ export class QualityModule {
   }
 
   private setRoutes() {
-    this.router.get(
-      '/',
-      Auth.user,
-      Auth.role([Rol.Admin]),
-      this.controller.getRating
-    );
-    this.router.get(
-      '/:userId',
-      Auth.user,
-      Auth.role([Rol.Admin]),
-      this.controller.getDriverVotes
-    );
+    this.router.get('/rating', Auth.user, Auth.role([Rol.Admin]), this.controller.getRating);
+    this.router.get('/rating/:userId', Auth.user, Auth.role([Rol.Admin]), this.controller.getDriverVotes);
     this.router.post('/vote', this.controller.vote);
+    this.router.get('/drivers', this.controller.getDrivers);
+    this.router.delete('/:voteId/delete-vote', Auth.user, Auth.role([Rol.Admin]), this.controller.deleteVote);
   }
 }

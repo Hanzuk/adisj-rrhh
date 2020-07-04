@@ -26,14 +26,32 @@ export class QualityRepository {
 
   public async getVotesFromDriver(userId: number): Promise<Quality[]> {
     const result = await DB.query(
-      `SELECT calificacion
+      `SELECT id
+        , calificacion
         , nombre_cliente
         , comentario
+        , fecha
       FROM control_calidad
       WHERE id_empleado = ?`,
       [userId]
     );
 
     return [...result];
+  }
+
+  public async getDrivers() {
+    const result = await DB.query(
+      `SELECT id
+        , CONCAT(nombre, ' ', p_apellido) as nombre
+      FROM empleados
+      WHERE tipo_empleado = 3 AND activo = 1`,
+      ''
+    );
+
+    return [...result];
+  }
+
+  public async deleteVote(voteId: number) {
+    await DB.query('DELETE FROM control_calidad WHERE id = ?;', voteId);
   }
 }

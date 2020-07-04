@@ -58,4 +58,28 @@ export class QualityController {
       });
     }
   };
+
+  public getDrivers = async (req: Request, res: Response) => {
+    try {
+      const drivers = await this.business.getDrivers();
+      return res.status(200).send(drivers);
+    } catch (error) {
+      return res.status(400).send({
+        message: 'No se pudo obtener los choferes',
+        error,
+      });
+    }
+  };
+
+  public deleteVote = async (req: Request, res: Response) => {
+    try {
+      await this.business.deleteVote(parseInt(req.params.voteId));
+      return res.status(200).send({ message: 'Voto eliminado' });
+    } catch (error) {
+      return res.status(400).send({
+        message: 'No se pudo eliminar el voto',
+        error,
+      });
+    }
+  };
 }

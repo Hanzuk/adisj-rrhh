@@ -15,6 +15,11 @@
         <b-navbar-item tag="router-link" :to="{ name: 'permit-create' }">Solicitar permiso</b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ name: 'permits' }">Ver permisos</b-navbar-item>
       </b-navbar-dropdown>
+      <b-navbar-dropdown label="Horas extra">
+        <b-navbar-item tag="router-link" :to="{ name: 'overtime-create' }">Solicitar horas extra</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'overtime' }">Ver horas extras</b-navbar-item>
+      </b-navbar-dropdown>
+      <b-navbar-item tag="router-link" :to="{ name: 'quality-control' }">Control de calidad</b-navbar-item>
     </template>
 
     <template slot="end">

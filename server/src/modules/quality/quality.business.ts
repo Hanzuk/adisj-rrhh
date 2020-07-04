@@ -14,10 +14,7 @@ export class QualityBusiness {
     return rating.map((driver) => {
       const precision = Math.pow(10, 1);
       const calificacion =
-        Math.round(
-          (driver.suma_calificaciones / driver.cantidad_calificaciones) *
-            precision
-        ) / precision;
+        Math.round((driver.suma_calificaciones / driver.cantidad_calificaciones) * precision) / precision;
 
       return {
         id_empleado: driver.id_empleado,
@@ -31,5 +28,13 @@ export class QualityBusiness {
 
   public async getVotesFromDriver(userId: number) {
     return await this.repository.getVotesFromDriver(userId);
+  }
+
+  public async getDrivers() {
+    return await this.repository.getDrivers();
+  }
+
+  public async deleteVote(voteId: number) {
+    await this.repository.deleteVote(voteId);
   }
 }
