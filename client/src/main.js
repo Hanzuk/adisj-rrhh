@@ -7,6 +7,27 @@ import 'buefy/dist/buefy.css';
 import './vee-validate';
 import { decode } from 'jsonwebtoken';
 import Cleave from 'cleave.js';
+import numeral from 'numeral';
+numeral.locale('cr');
+
+numeral.register('locale', 'cr', {
+  delimiters: {
+    thousands: ',',
+    decimal: '.',
+  },
+  abbreviations: {
+    thousand: 'k',
+    million: 'm',
+    billion: 'b',
+    trillion: 't',
+  },
+  ordinal: function(number) {
+    return number === 1 ? 'er' : 'ème';
+  },
+  currency: {
+    symbol: '₡ ',
+  },
+});
 
 Vue.use(Buefy);
 

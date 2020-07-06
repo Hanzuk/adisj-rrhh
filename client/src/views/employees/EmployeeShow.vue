@@ -207,26 +207,6 @@ import store from '@/store';
 import { format, formatDistanceToNow, formatDistance } from 'date-fns';
 import es from 'date-fns/locale/es';
 import numeral from 'numeral';
-numeral.locale('cr');
-
-numeral.register('locale', 'cr', {
-  delimiters: {
-    thousands: ',',
-    decimal: '.',
-  },
-  abbreviations: {
-    thousand: 'k',
-    million: 'm',
-    billion: 'b',
-    trillion: 't',
-  },
-  ordinal: function(number) {
-    return number === 1 ? 'er' : 'ème';
-  },
-  currency: {
-    symbol: '₡ ',
-  },
-});
 
 export default {
   name: 'EmployeeShow',

@@ -58,7 +58,22 @@ export const getters = {
       state.employee.cedula.slice(4, 8)
     );
   },
-  getDrivers(state) {
-    return state.employees.filter(employee => employee.tipo_empleado === 3);
+  getEmployees(state) {
+    return state.employees.map(employee => {
+      return {
+        id: employee.id,
+        nombre_completo: `${employee.nombre} ${employee.p_apellido} ${employee.s_apellido}`,
+        fecha_contrato: employee.fecha_contrato,
+        tipo_empleado: employee.tipo_empleado,
+      };
+    });
+  },
+  employeesForAutocomplete(state) {
+    return state.employees.map(employee => {
+      return {
+        id: employee.id,
+        nombre_completo: `${employee.nombre} ${employee.p_apellido} ${employee.s_apellido}`,
+      };
+    });
   },
 };
