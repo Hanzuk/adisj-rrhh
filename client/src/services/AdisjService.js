@@ -74,4 +74,28 @@ export default {
   async deleteVote(voteId) {
     return await api.delete(`/quality/${voteId}/delete-vote`);
   },
+  getSalary(data) {
+    return api.post('/salary/calc-wages', data);
+  },
+  getRetentions() {
+    return api.get('/salary/retentions');
+  },
+  postRetention(data) {
+    return api.post('/salary/retention', data);
+  },
+  deleteRetention(id) {
+    return api.delete(`/salary/${id}/delete-retention`);
+  },
+  addIncrease(employeeId, data) {
+    return api.post(`/salary/${employeeId}/increase`, data);
+  },
+  getIncreases() {
+    return api.get(`/salary/increases`);
+  },
+  getHandicaps() {
+    return api.get(`/salary/handicaps`);
+  },
+  postHandicap(data) {
+    return api.post(`/salary/handicaps`, data);
+  },
 };

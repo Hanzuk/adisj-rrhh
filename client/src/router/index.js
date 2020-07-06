@@ -4,6 +4,7 @@ import { decode } from 'jsonwebtoken';
 import employeeRoutes from '@/router/employee.js';
 import permitRoutes from '@/router/permit.js';
 import overtimeRoutes from '@/router/overtime.js';
+import spreadsheetRoutes from '@/router/spreadsheet.js';
 
 Vue.use(VueRouter);
 
@@ -40,6 +41,7 @@ const routes = [
   ...employeeRoutes,
   ...permitRoutes,
   ...overtimeRoutes,
+  ...spreadsheetRoutes,
 ];
 
 const router = new VueRouter({

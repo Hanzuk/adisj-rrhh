@@ -19,7 +19,17 @@
         <b-navbar-item tag="router-link" :to="{ name: 'overtime-create' }">Solicitar horas extra</b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ name: 'overtime' }">Ver horas extras</b-navbar-item>
       </b-navbar-dropdown>
-      <b-navbar-item tag="router-link" :to="{ name: 'quality-control' }">Control de calidad</b-navbar-item>
+      <b-navbar-dropdown label="Planilla">
+        <b-navbar-item tag="router-link" :to="{ name: 'payroll' }">Cálculo salarial</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'increases' }">Aumentos salariales</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'withholding' }">Retenciones salariales</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'handicaps' }">Incapacidades</b-navbar-item>
+      </b-navbar-dropdown>
+      <b-navbar-dropdown label="Control disciplinario">
+        <b-navbar-item tag="router-link" :to="{ name: 'quality-control' }">Calidad servicio de choferes</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'increases' }">Amonestaciones</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'withholding' }">Felicitaciones</b-navbar-item>
+      </b-navbar-dropdown>
     </template>
 
     <template slot="end">
