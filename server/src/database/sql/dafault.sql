@@ -589,13 +589,29 @@ INSERT INTO distritos (codigo, codigo_canton, nombre) VALUES
 
 -- Nuevo administrador
 INSERT INTO empleados (cedula, nombre, p_apellido, s_apellido, fecha_nacimiento, correo, clave, activo, tipo_empleado)
-VALUES ('140578950', 'Roberto', 'Duarte', 'Vindas', '1990-03-03', 'admin007@gmail.com', '$2a$10$IhbfjLFEflE0fWBd1nSKLOCDNlZR1ijCI/iToWJKDte8Qj6v3IAJq', 1, 1);
+VALUES ('140578950', 'Leonidas', 'Quesada', 'Jonhs', '1980-01-30', 'admin01@gmail.com', '$2a$10$IhbfjLFEflE0fWBd1nSKLOCDNlZR1ijCI/iToWJKDte8Qj6v3IAJq', 1, 1);
 
 INSERT INTO telefonos (id_empleado, numero, activo, tipo_telefono)
-VALUES (1, '84568102', 1, 1);
+VALUES (1, '89008760', 1, 1);
 
 INSERT INTO direcciones (id_empleado, codigo_provincia, codigo_canton, codigo_distrito, direccion, activo)
-VALUES (1, 1, 104, 10403, 'Por el puente', 1);
+VALUES (1, 1, 104, 10403, 'Por la plaza primera calle a mano izquieda casa blanca a la derecha a 200 mts', 1);
 
 INSERT INTO salarios (id_empleado, salario_hora, jornada, activo)
-VALUES (1, 1751.72, 8, 0);
+VALUES (1, 920.72, 8, 1);
+
+-- Nuevo chofer
+INSERT INTO empleados (cedula, nombre, p_apellido, s_apellido, fecha_nacimiento, correo, clave, activo, tipo_empleado, fecha_contrato)
+VALUES ('285985783', 'Dimitri', 'Diaz', 'Salas', '1985-10-09', 'dimitri@hotmail.com', '$2a$10$IhbfjLFEflE0fWBd1nSKLOCDNlZR1ijCI/iToWJKDte8Qj6v3IAJq', 1, 3, '2010-02-23');
+
+INSERT INTO telefonos (id_empleado, numero, activo, tipo_telefono)
+VALUES (2, '78452568', 1, 1);
+
+INSERT INTO direcciones (id_empleado, codigo_provincia, codigo_canton, codigo_distrito, direccion, activo)
+VALUES (2, 1, 104, 10403, '200 mts norte de la catedral', 1);
+
+INSERT INTO salarios (id_empleado, salario_hora, jornada, activo)
+VALUES (2, 1621.47, 8, 1);
+
+INSERT INTO vacaciones_disponibles (id_empleado, cantidad)
+VALUES (2, 120);

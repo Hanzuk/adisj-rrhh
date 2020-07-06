@@ -17,7 +17,7 @@ CREATE TABLE empleados (
   s_apellido VARCHAR(30) NOT NULL,
   fecha_nacimiento DATE NOT NULL,
   fecha_contrato DATETIME DEFAULT NOW() NOT NULL,
-  correo VARCHAR(200) UNIQUE NOT NULL,
+  correo VARCHAR(150) UNIQUE NOT NULL,
   clave VARCHAR(200) NOT NULL,
   activo BOOLEAN NOT NULL,
   -- aprobado BOOLEAN DEFAULT false NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE empleados_temporales (
   id INT AUTO_INCREMENT,
   id_empleado INT NOT NULL,
   fecha_salida DATETIME NOT NULL,
-  descripcion VARCHAR(300) NOT NULL,
+  descripcion VARCHAR(200) NOT NULL,
   CONSTRAINT pk_empleados_temporales PRIMARY KEY(id),
   CONSTRAINT fk_empleados_temporales_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id)
 );
@@ -42,7 +42,7 @@ CREATE TABLE contratos_empleados_temporales (
   fecha_contrato DATETIME NOT NULL,
   fecha_salida DATETIME NOT NULL,
   dias INT NOT NULL DEFAULT 0,
-  descripcion VARCHAR(300) NOT NULL,
+  descripcion VARCHAR(200) NOT NULL,
   activo BOOLEAN DEFAULT true NOT NULL,
   CONSTRAINT pk_contratos_empleados_temporales PRIMARY KEY(id),
   CONSTRAINT fk_contratos_empleados_temporales_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id)
@@ -93,7 +93,7 @@ CREATE TABLE horas_extras (
   id_empleado INT NOT NULL,
   id_estado TINYINT DEFAULT 1 NOT NULL,
   cantidad_horas TINYINT DEFAULT 0 NOT NULL,
-  descripcion VARCHAR(300) NOT NULL,
+  descripcion VARCHAR(100) NOT NULL,
   fecha DATETIME DEFAULT NOW() NOT NULL,
   activo BOOLEAN DEFAULT true NOT NULL,
   CONSTRAINT pk_horas_extras PRIMARY KEY(id),
@@ -105,9 +105,9 @@ CREATE TABLE horas_extras (
 CREATE TABLE despidos (
   id INT auto_increment NOT NULL,
 	id_empleado INT NOT NULL,
-  descripcion VARCHAR(300) NOT NULL,
-  fecha_despido DATETIME default NOW() NOT NULL,
-  activo BOOLEAN default true NOT NULL,
+  descripcion VARCHAR(200) NOT NULL,
+  fecha_despido DATETIME DEFAULT NOW() NOT NULL,
+  activo BOOLEAN DEFAULT true NOT NULL,
   CONSTRAINT pk_despidos PRIMARY KEY(id),
   CONSTRAINT fk_despidos_id_empleados FOREIGN KEY(id_empleado) REFERENCES empleados(id)
 );
@@ -193,7 +193,7 @@ CREATE TABLE tareas (
   id INT AUTO_INCREMENT NOT NULL,
   id_empleado INT NOT NULL,
   titulo VARCHAR(100) NOT NULL,
-  descripcion VARCHAR(300) NOT NULL,
+  descripcion VARCHAR(200) NOT NULL,
   activo BOOLEAN DEFAULT true NOT NULL,
   fecha_asignacion DATETIME DEFAULT NOW() NOT NULL,
   -- asignacion_chofer TINYINT NOT NULL,
@@ -239,7 +239,7 @@ CREATE TABLE retenciones_salariales (
   id_empleado INT NOT NULL,
 	retencion DECIMAL(10, 2) DEFAULT 0 NOT NULL,
   fecha DATETIME DEFAULT NOW() NOT NULL,
-  descripcion VARCHAR(300) NOT NULL,
+  descripcion VARCHAR(200) NOT NULL,
   activo BOOLEAN DEFAULT true NOT NULL,
   CONSTRAINT pk_retenciones_salariales PRIMARY KEY(id),
   CONSTRAINT fk_retenciones_salariales_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id)
@@ -267,4 +267,24 @@ CREATE TABLE control_calidad (
   fecha DATETIME DEFAULT NOW() NOT NULL,
   CONSTRAINT pk_control_calidad PRIMARY KEY(id),
   CONSTRAINT fk_control_calidad_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id)
+);
+
+CREATE TABLE amonestaciones (
+	id INT auto_increment,
+  id_empleado INT NOT NULL,
+  descripcion VARCHAR(200) NOT NULL,
+  fecha DATETIME DEFAULT NOW() NOT NULL,
+  activo BOOLEAN DEFAULT true NOT NULL,
+  CONSTRAINT fk_amonestaciones_id_empleado FOREIGN KEY (id_empleado) REFERENCES empleados(id),
+  CONSTRAINT pk_amonestaciones PRIMARY KEY(id)
+);
+
+CREATE TABLE felicitaciones (
+	id INT auto_increment,
+  id_empleado INT NOT NULL,
+  descripcion VARCHAR(200) NOT NULL,
+  fecha DATETIME DEFAULT NOW() NOT NULL,
+  activo BOOLEAN DEFAULT true NOT NULL,
+  CONSTRAINT fk_felicitaciones_id_empleado FOREIGN KEY (id_empleado) REFERENCES empleados(id),
+  CONSTRAINT pk_felicitaciones PRIMARY KEY(id)
 );

@@ -1,11 +1,11 @@
 /* -------------------------------------------------------------------------- */
-/*                            Funcion Salario Bruto                           */
+/*                            Funcion Salario Base                            */
 /* -------------------------------------------------------------------------- */
-DROP FUNCTION IF EXISTS `salario_bruto`;
+DROP FUNCTION IF EXISTS `salario_base`;
 
 DELIMITER $$
 USE `adisj`$$
-CREATE DEFINER=`root`@`localhost` FUNCTION `salario_bruto`(
+CREATE DEFINER=`root`@`localhost` FUNCTION `salario_base`(
   _id INT,
   _mes INT,
   _anio INT
@@ -42,14 +42,13 @@ END$$
 DELIMITER ;
 
 /* -------------------------------------------------------------------------- */
-/*               Funcion Salario Bruto Chofer Servicio Especial               */
+/*                Funcion Salario Base Chofer Servicio Especial               */
 /* -------------------------------------------------------------------------- */
-
-DROP FUNCTION IF EXISTS `salario_bruto_especial`;
+DROP FUNCTION IF EXISTS `salario_base_especial`;
 
 DELIMITER $$
 USE `adisj`$$
-CREATE DEFINER=`root`@`localhost` FUNCTION `salario_bruto_especial`(
+CREATE DEFINER=`root`@`localhost` FUNCTION `salario_base_especial`(
   _id INT,
   _mes INT,
   _anio INT
@@ -100,29 +99,29 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `impuesto_renta`(
   DETERMINISTIC
 BEGIN
   DECLARE rentaTemp INT DEFAULT 0;
-  DECLARE salarioBruto DECIMAL(10, 2) DEFAULT 0;
+  DECLARE salarioBase DECIMAL(10, 2) DEFAULT 0;
   DECLARE total DECIMAL(10, 2) DEFAULT 0;
 
-	SET salarioBruto = (SELECT salario_bruto(_id, _mes, _anio));
+	SET salarioBase = (SELECT salario_base(_id, _mes, _anio));
 
-  IF salarioBruto >= 840000 AND salarioBruto <= 1233000 THEN
+  IF salarioBase > 840000 THEN
     SET rentaTemp = 1233000 - 840000;
-    SET total = (rentaTemp * 10) / 100;
+    SET total = total + (rentaTemp * 10) / 100;
   END IF;
 
-  IF salarioBruto > 1233000 AND salarioBruto <= 1163000 THEN
-    SET rentaTemp = 1163000 - 1233000;
-    SET total = (rentaTemp * 15) / 100;
+  IF salarioBase > 1233000 THEN
+    SET rentaTemp = salarioBase - 1233000;
+    SET total = total + ((rentaTemp * 15) / 100);
   END IF;
 
-  IF salarioBruto > 1163000 AND salarioBruto <= 4325000 THEN
-    SET rentaTemp = 4325000 - 1163000;
-    SET total = (rentaTemp * 20) / 100;
+  IF salarioBase > 2163000 THEN
+    SET rentaTemp = salarioBase - 2163000;
+    SET total = total + ((rentaTemp * 20) / 100);
   END IF;
 
-  IF salarioBruto > 4325000 THEN
-    SET rentaTemp = 4325000 - 5000000;
-    SET total = (rentaTemp * 25) / 100;
+  IF salarioBase > 4325000 THEN
+    SET rentaTemp = salarioBase - 5000000;
+    SET total = total + ((rentaTemp * 25) / 100);
   END IF;
 
   RETURN total;
@@ -130,14 +129,14 @@ END$$
 DELIMITER ;
 
 /* -------------------------------------------------------------------------- */
-/*                            Funcion Salario Neto                            */
+/*                            Funcion Salario Bruto                           */
 /* -------------------------------------------------------------------------- */
 USE `adisj`;
-DROP FUNCTION IF EXISTS `salario_neto`;
+DROP FUNCTION IF EXISTS `salario_bruto`;
 
 DELIMITER $$
 USE `adisj`$$
-CREATE DEFINER=`root`@`localhost` FUNCTION `salario_neto`(
+CREATE DEFINER=`root`@`localhost` FUNCTION `salario_bruto`(
 	_id INT,
   _mes INT,
   _anio INT
@@ -152,11 +151,11 @@ BEGIN
 	DECLARE totalBonos INT DEFAULT 0;
   DECLARE vacacionesUsadas INT DEFAULT 0;
   DECLARE retenciones DECIMAL(10, 2) DEFAULT 0;
-	DECLARE salarioBruto DECIMAL(10, 2) DEFAULT 0;
+	DECLARE salarioBase DECIMAL(10, 2) DEFAULT 0;
   DECLARE impuestoRenta DECIMAL(10, 2) DEFAULT 0;
 	DECLARE total DECIMAL(10, 2) DEFAULT 0;
 
-	SET salarioBruto = (SELECT salario_bruto(_id, _mes, _anio));
+	SET salarioBase = (SELECT salario_base(_id, _mes, _anio));
 	SET impuestoRenta = (SELECT impuesto_renta(_id, _mes, _anio));
 
 	IF(SELECT tipo_empleado FROM empleados WHERE id = _id) <> 4 THEN
@@ -187,10 +186,10 @@ BEGIN
     SET salarioHora = (SELECT salario_hora FROM salarios WHERE activo = true AND id_empleado = _id);
     SET horasJornada = (SELECT jornada FROM salarios WHERE activo = true AND id_empleado = _id);
 
-	  SET total = ((salarioBruto - retenciones) + (vacacionesUsadas * salarioHora * horasJornada * -1) + (vacacionesUsadas * salarioHora * horasJornada) + (salarioHora * totalPermisos * -1) + (horasExtra * salarioHora * 1.5) + (totalBonos) + ((((salarioHora * horasJornada) ) ) ));
+	  SET total = ((salarioBase - retenciones) + (vacacionesUsadas * salarioHora * horasJornada * -1) + (vacacionesUsadas * salarioHora * horasJornada) + (salarioHora * totalPermisos * -1) + (horasExtra * salarioHora * 1.5) + (totalBonos) + ((((salarioHora * horasJornada) ) ) ));
 
   ELSE
-    SET total = salarioBruto;
+    SET total = salarioBase;
   END IF;
 
   RETURN total - impuestoRenta;
@@ -198,14 +197,14 @@ END$$
 DELIMITER ;
 
 /* -------------------------------------------------------------------------- */
-/*                          Funcion Cargas Sociales                          */
+/*                            Funcion Salario Neto                            */
 /* -------------------------------------------------------------------------- */
 USE `adisj`;
-DROP FUNCTION IF EXISTS `salario`;
+DROP FUNCTION IF EXISTS `salario_neto`;
 
 DELIMITER $$
 USE `adisj`$$
-CREATE DEFINER=`root`@`localhost` FUNCTION `salario`(
+CREATE DEFINER=`root`@`localhost` FUNCTION `salario_neto`(
 	_id INT,
   _mes INT,
   _anio INT
@@ -214,19 +213,19 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `salario`(
   DETERMINISTIC
 BEGIN
   DECLARE ccss_obrero INT DEFAULT 0;
-	DECLARE salarioHora DECIMAL(10, 2) DEFAULT 0;
-  DECLARE horasJornada INT DEFAULT 0;
-  DECLARE salarioNeto DECIMAL(10, 2) DEFAULT 0;
-  DECLARE salarioDia DECIMAL(10, 2) ;
+	-- DECLARE salarioHora DECIMAL(10, 2) DEFAULT 0;
+  -- DECLARE horasJornada INT DEFAULT 0;
+  DECLARE salarioBruto DECIMAL(10, 2) DEFAULT 0;
+  -- DECLARE salarioDia DECIMAL(10, 2) ;
 	DECLARE total DECIMAL(10, 2) DEFAULT 0;
 
-  SET salarioHora = (SELECT salario_hora FROM salarios WHERE activo = true AND id_empleado = _id);
-  SET horasJornada = (SELECT jornada FROM salarios WHERE activo = true AND id_empleado = _id);
+  -- SET salarioHora = (SELECT salario_hora FROM salarios WHERE activo = true AND id_empleado = _id);
+  -- SET horasJornada = (SELECT jornada FROM salarios WHERE activo = true AND id_empleado = _id);
 
-	SET salarioDia = (salarioHora * horasJornada);
-  SET salarioNeto = (SELECT salario_neto(_id, _mes, _anio));
-  SET ccss_obrero = (((salarioNeto * 10.5) / 100) * -1);
-  SET total =  (salarioNeto + ccss_obrero);
+	-- SET salarioDia = (salarioHora * horasJornada);
+  SET salarioBruto = (SELECT salario_bruto(_id, _mes, _anio));
+  SET ccss_obrero = (((salarioBruto * 10.5) / 100) * -1);
+  SET total =  (salarioBruto + ccss_obrero);
 
   RETURN total;
 END $$
@@ -264,9 +263,9 @@ BEGIN
   DECLARE anioContratacion INT;
   DECLARE mesContratacion INT;
   DECLARE mesCount INT;
-  DECLARE bruto INT DEFAULT 0;
+  DECLARE base INT DEFAULT 0;
 
-  SET bruto = (SELECT salario_bruto(_id, _mes, _anio));
+  SET base = (SELECT salario_base(_id, _mes, _anio));
 
   IF(SELECT tipo_empleado FROM empleados WHERE id = _id) <> 4 THEN
     SET totalAnio = _anio - 1;
