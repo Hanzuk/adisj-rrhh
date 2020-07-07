@@ -96,7 +96,7 @@ export class WagesRepository {
       salario_bruto: info[1][0].salario_bruto,
       impuesto_renta: info[2][0].impuesto_renta,
       total_deduccion: info[1][0].salario_bruto * 0.105,
-      salario_neto: info[3][0].salario,
+      salario_neto: info[3][0].salario_neto,
       aguinaldo: info[4][0].aguinaldo,
     };
   }
