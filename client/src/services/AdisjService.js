@@ -110,4 +110,22 @@ export default {
   getCongrats() {
     return api.get(`/quality/congrats`);
   },
+  getSchedule() {
+    return api.get(`/tasks/schedule`);
+  },
+  postTask(id, data) {
+    return api.post(`/tasks/task/${id}`, data);
+  },
+  postTaskDriver(id, data) {
+    return api.post(`/tasks/driver/${id}`, data);
+  },
+  getTasks() {
+    return api.get(`/tasks/tasks`);
+  },
+  getTask(taskId) {
+    return api.get(`/tasks/task/${taskId}`);
+  },
+  deleteTask(taskId) {
+    return api.delete(`/tasks/task/${taskId}`);
+  },
 };

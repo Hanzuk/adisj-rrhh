@@ -43,8 +43,10 @@ export class TasksRepository {
         , t.titulo
         , t.descripcion
         , CONCAT(e.nombre, ' ', e.p_apellido) AS asignada_a
+        , t.fecha_asignacion
       FROM tareas t
-      INNER JOIN empleados e ON t.id_empleado = e.id;`,
+      INNER JOIN empleados e ON t.id_empleado = e.id
+      ORDER BY t.fecha_asignacion DESC;`,
       ''
     );
 
@@ -83,9 +85,13 @@ export class TasksRepository {
   }
 
   public async deleteTask(taskId: number) {
-    await DB.query('DELETE FROM asignaciones_choferes WHERE id_tarea = ?;', [
-      taskId,
+    await Promise.all([
+      DB.query('DELETE FROM asignaciones_choferes WHERE id_tarea = ?;', [taskId]),
+      DB.query('DELETE FROM tareas WHERE id = ?;', [taskId]),
     ]);
-    await DB.query('DELETE FROM tareas WHERE id = ?;', [taskId]);
+  }
+
+  public getSchedule() {
+    return DB.query('SELECT id,hora_entrada,hora_salida FROM horarios_choferes;', '');
   }
 }

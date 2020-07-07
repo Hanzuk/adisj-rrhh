@@ -30,6 +30,10 @@
         <b-navbar-item tag="router-link" :to="{ name: 'warnings' }">Amonestaciones</b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ name: 'congrats' }">Felicitaciones</b-navbar-item>
       </b-navbar-dropdown>
+      <b-navbar-dropdown label="Tareas">
+        <b-navbar-item tag="router-link" :to="{ name: 'new-task' }">Nueva tarea</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'tasks' }">Ver tareas</b-navbar-item>
+      </b-navbar-dropdown>
     </template>
 
     <template slot="end">

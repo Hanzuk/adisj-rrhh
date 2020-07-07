@@ -15,22 +15,11 @@ export class TasksModule {
   }
 
   private setRoutes() {
-    this.router.get('/', this.controller.getTasks);
-    this.router.get('/:taskId', this.controller.getTask);
-    this.router.post(
-      '/:userId',
-      Auth.role([Rol.Admin]),
-      this.controller.createTask
-    );
-    this.router.post(
-      '/driver/:userId',
-      Auth.role([Rol.Admin]),
-      this.controller.createTaskDriver
-    );
-    this.router.delete(
-      '/:taskId',
-      Auth.role([Rol.Admin]),
-      this.controller.deleteTask
-    );
+    this.router.get('/tasks', this.controller.getTasks);
+    this.router.get('/task/:taskId', this.controller.getTask);
+    this.router.post('/task/:userId', Auth.role([Rol.Admin]), this.controller.createTask);
+    this.router.post('/driver/:userId', Auth.role([Rol.Admin]), this.controller.createTaskDriver);
+    this.router.delete('/task/:taskId', Auth.role([Rol.Admin]), this.controller.deleteTask);
+    this.router.get('/schedule', Auth.role([Rol.Admin]), this.controller.schedule);
   }
 }

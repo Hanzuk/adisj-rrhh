@@ -9,11 +9,7 @@ export class TasksBusiness {
     await this.repository.insertTask(task);
   }
 
-  public async insertTaskDriver(
-    task: Task,
-    driverTask: DriverTask,
-    days: string[]
-  ) {
+  public async insertTaskDriver(task: Task, driverTask: DriverTask, days: string[]) {
     driverTask.id_tarea = await this.repository.insertTask(task);
     await this.repository.insertTaskDriver(driverTask, days);
   }
@@ -36,5 +32,9 @@ export class TasksBusiness {
 
   public async deleteATask(taskId: number) {
     await this.repository.deleteTask(taskId);
+  }
+
+  public getSchedule() {
+    return this.repository.getSchedule();
   }
 }

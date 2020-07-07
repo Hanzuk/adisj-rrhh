@@ -5,10 +5,7 @@ import { UsersBusiness } from '../users/users.business';
 import { DriverTask } from './interfaces/driverTask.interface';
 
 export class TasksController {
-  constructor(
-    private taskBusiness = new TasksBusiness(),
-    private userBusiness = new UsersBusiness()
-  ) {}
+  constructor(private taskBusiness = new TasksBusiness(), private userBusiness = new UsersBusiness()) {}
 
   public createTask = async (req: Request, res: Response) => {
     const { userId } = req.params;
@@ -32,9 +29,7 @@ export class TasksController {
     const { titulo, descripcion, asignacion_chofer } = req.body;
 
     if (!asignacion_chofer) {
-      return res
-        .status(400)
-        .send({ message: 'Faltan datos para asignar esta tarea' });
+      return res.status(400).send({ message: 'Faltan datos para asignar esta tarea' });
     }
 
     try {
@@ -82,13 +77,7 @@ export class TasksController {
       const tasks = await this.taskBusiness.getAllTasks();
 
       if (res.locals.authenticated.tipo_empleado !== Rol.Admin) {
-        return res
-          .status(200)
-          .send(
-            tasks.filter(
-              (task) => task.id_empleado === res.locals.authenticated.id
-            )
-          );
+        return res.status(200).send(tasks.filter((task) => task.id_empleado === res.locals.authenticated.id));
       }
 
       return res.status(200).send(tasks);
@@ -114,6 +103,16 @@ export class TasksController {
       await this.taskBusiness.deleteATask(parseInt(taskId));
 
       return res.status(200).send({ message: 'Tarea eliminda con éxito' });
+    } catch (error) {
+      return res.status(404).send(error);
+    }
+  };
+
+  public schedule = async (req: Request, res: Response) => {
+    try {
+      const data = await this.taskBusiness.getSchedule();
+
+      return res.status(200).send(data);
     } catch (error) {
       return res.status(404).send(error);
     }

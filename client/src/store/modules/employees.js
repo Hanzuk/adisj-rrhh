@@ -73,6 +73,7 @@ export const getters = {
       return {
         id: employee.id,
         nombre_completo: `${employee.nombre} ${employee.p_apellido} ${employee.s_apellido}`,
+        tipo: employee.tipo_empleado,
       };
     });
   },
