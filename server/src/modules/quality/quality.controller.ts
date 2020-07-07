@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { addDays } from 'date-fns';
 import { QualityBusiness } from './quality.business';
+import { Rol } from '../../utils/enums';
 
 export class QualityController {
   constructor(private business: QualityBusiness = new QualityBusiness()) {}
@@ -78,6 +79,63 @@ export class QualityController {
     } catch (error) {
       return res.status(400).send({
         message: 'No se pudo eliminar el voto',
+        error,
+      });
+    }
+  };
+
+  public newWarning = async (req: Request, res: Response) => {
+    const { id_empleado, descripcion } = req.body;
+    try {
+      await this.business.addWarning({ id_empleado, descripcion });
+      return res.status(200).send({ message: 'Amonestacion registrada.' });
+    } catch (error) {
+      return res.status(400).send({
+        message: 'No se pudo registrar la amonestacion',
+        error,
+      });
+    }
+  };
+
+  public newCongrat = async (req: Request, res: Response) => {
+    const { id_empleado, descripcion } = req.body;
+    try {
+      await this.business.addCongrat({ id_empleado, descripcion });
+      return res.status(200).send({ message: 'Felicitacion registrada.' });
+    } catch (error) {
+      return res.status(400).send({
+        message: 'No se pudo registrar la felicitacion',
+        error,
+      });
+    }
+  };
+
+  public getWarnings = async (req: Request, res: Response) => {
+    try {
+      const data = await this.business.getWarnings();
+
+      if (res.locals.authenticated.tipo_empleado !== Rol.Admin) {
+        return res.status(200).send(data.filter((item) => item.id_empleado === res.locals.authenticated.id));
+      }
+
+      return res.status(200).send(data);
+
+      return res.status(200).send(data);
+    } catch (error) {
+      return res.status(400).send({
+        message: 'No se pudo obtener las amonestaciones',
+        error,
+      });
+    }
+  };
+
+  public getCongrats = async (req: Request, res: Response) => {
+    try {
+      const data = await this.business.getCongrats();
+      return res.status(200).send(data);
+    } catch (error) {
+      return res.status(400).send({
+        message: 'No se pudo obtener las felicitaciones',
         error,
       });
     }

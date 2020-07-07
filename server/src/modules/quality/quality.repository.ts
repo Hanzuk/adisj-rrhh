@@ -54,4 +54,26 @@ export class QualityRepository {
   public async deleteVote(voteId: number) {
     await DB.query('DELETE FROM control_calidad WHERE id = ?;', voteId);
   }
+
+  public async addWarning(data: { id_empleado: number; descripcion: string }) {
+    await DB.query('INSERT INTO amonestaciones SET ?;', data);
+  }
+
+  public async addCongrat(data: { id_empleado: number; descripcion: string }) {
+    await DB.query('INSERT INTO felicitaciones SET ?;', data);
+  }
+
+  public getWarnings(): Promise<{ id_empleado: number }[]> {
+    return DB.query(
+      `SELECT CONCAT(e.nombre, ' ', e.p_apellido) AS empleado, a.id_empleado, a.id, a.fecha, a.descripcion FROM amonestaciones a INNER JOIN empleados e ON a.id_empleado = e.id WHERE a.activo = 1 ORDER BY fecha DESC;`,
+      ''
+    );
+  }
+
+  public getCongrats(): Promise<{ id_empleado: number }[]> {
+    return DB.query(
+      `SELECT CONCAT(e.nombre, ' ', e.p_apellido) AS empleado, a.id_empleado, a.id, a.fecha, a.descripcion FROM felicitaciones a INNER JOIN empleados e ON a.id_empleado = e.id WHERE a.activo = 1 ORDER BY fecha DESC;`,
+      ''
+    );
+  }
 }

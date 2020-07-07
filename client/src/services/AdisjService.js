@@ -98,4 +98,16 @@ export default {
   postHandicap(data) {
     return api.post(`/salary/handicaps`, data);
   },
+  postWarning(data) {
+    return api.post(`/quality/warning`, data);
+  },
+  postCongrat(data) {
+    return api.post(`/quality/congrat`, data);
+  },
+  getWarnings() {
+    return api.get(`/quality/warnings`);
+  },
+  getCongrats() {
+    return api.get(`/quality/congrats`);
+  },
 };

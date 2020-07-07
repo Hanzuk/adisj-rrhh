@@ -37,4 +37,20 @@ export class QualityBusiness {
   public async deleteVote(voteId: number) {
     await this.repository.deleteVote(voteId);
   }
+
+  public async addWarning(data: { id_empleado: number; descripcion: string }) {
+    await this.repository.addWarning(data);
+  }
+
+  public async addCongrat(data: { id_empleado: number; descripcion: string }) {
+    await this.repository.addCongrat(data);
+  }
+
+  public getWarnings() {
+    return this.repository.getWarnings();
+  }
+
+  public getCongrats() {
+    return this.repository.getCongrats();
+  }
 }

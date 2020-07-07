@@ -38,6 +38,18 @@ const routes = [
     meta: { title: 'Control de calidad | Adisj', requiresAuth: true, adminOnly: true },
     component: () => import(/* webpackChunkName: "vote" */ '../views/QualityControl.vue'),
   },
+  {
+    path: '/amonestaciones',
+    name: 'warnings',
+    meta: { title: 'Amonestaciones | Adisj', requiresAuth: true },
+    component: () => import(/* webpackChunkName: "warnings" */ '../views/Warnings.vue'),
+  },
+  {
+    path: '/felicitaciones',
+    name: 'congrats',
+    meta: { title: 'Felicitaciones | Adisj', requiresAuth: true },
+    component: () => import(/* webpackChunkName: "congrats" */ '../views/Congrats.vue'),
+  },
   ...employeeRoutes,
   ...permitRoutes,
   ...overtimeRoutes,

@@ -27,8 +27,8 @@
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Control disciplinario">
         <b-navbar-item tag="router-link" :to="{ name: 'quality-control' }">Calidad servicio de choferes</b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ name: 'increases' }">Amonestaciones</b-navbar-item>
-        <b-navbar-item tag="router-link" :to="{ name: 'withholding' }">Felicitaciones</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'warnings' }">Amonestaciones</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'congrats' }">Felicitaciones</b-navbar-item>
       </b-navbar-dropdown>
     </template>
 

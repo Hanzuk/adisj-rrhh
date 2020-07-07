@@ -20,5 +20,9 @@ export class QualityModule {
     this.router.post('/vote', this.controller.vote);
     this.router.get('/drivers', this.controller.getDrivers);
     this.router.delete('/:voteId/delete-vote', Auth.user, Auth.role([Rol.Admin]), this.controller.deleteVote);
+    this.router.post('/warning', Auth.user, Auth.role([Rol.Admin]), this.controller.newWarning);
+    this.router.get('/warnings', Auth.user, this.controller.getWarnings);
+    this.router.post('/congrat', Auth.user, Auth.role([Rol.Admin]), this.controller.newCongrat);
+    this.router.get('/congrats', Auth.user, this.controller.getCongrats);
   }
 }
