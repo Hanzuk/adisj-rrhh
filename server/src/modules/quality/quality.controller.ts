@@ -132,6 +132,10 @@ export class QualityController {
   public getCongrats = async (req: Request, res: Response) => {
     try {
       const data = await this.business.getCongrats();
+      if (res.locals.authenticated.tipo_empleado !== Rol.Admin) {
+        return res.status(200).send(data.filter((item) => item.id_empleado === res.locals.authenticated.id));
+      }
+
       return res.status(200).send(data);
     } catch (error) {
       return res.status(400).send({
