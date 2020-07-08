@@ -87,7 +87,7 @@ export class WagesRepository {
         total_deduccion: info[1][0].salario_bruto * 0.105,
         salario_especial_chofer: specialGrossWage - specialDeduction,
         total_deduccion_especial: specialGrossWage * 0.105,
-        salario_neto: info[3][0].salario_neto + (specialGrossWage - specialDeduction),
+        salario_neto: info[3][0].salario_neto + (specialGrossWage - specialDeduction) - info[2][0].impuesto_renta,
         aguinaldo: info[4][0].aguinaldo,
       };
     }
@@ -96,7 +96,7 @@ export class WagesRepository {
       salario_bruto: info[1][0].salario_bruto,
       impuesto_renta: info[2][0].impuesto_renta,
       total_deduccion: info[1][0].salario_bruto * 0.105,
-      salario_neto: info[3][0].salario_neto,
+      salario_neto: info[3][0].salario_neto - info[2][0].impuesto_renta,
       aguinaldo: info[4][0].aguinaldo,
     };
   }

@@ -99,28 +99,28 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `impuesto_renta`(
   DETERMINISTIC
 BEGIN
   DECLARE rentaTemp INT DEFAULT 0;
-  DECLARE salarioBase DECIMAL(10, 2) DEFAULT 0;
+  DECLARE salarioBurto DECIMAL(10, 2) DEFAULT 0;
   DECLARE total DECIMAL(10, 2) DEFAULT 0;
 
-	SET salarioBase = (SELECT salario_base(_id, _mes, _anio));
+	SET salarioBurto = (SELECT salario_bruto(_id, _mes, _anio));
 
-  IF salarioBase > 840000 THEN
-    SET rentaTemp = 1233000 - 840000;
+  IF salarioBurto > 840000 THEN
+    SET rentaTemp = salarioBurto - 840000;
     SET total = total + (rentaTemp * 10) / 100;
   END IF;
 
-  IF salarioBase > 1233000 THEN
-    SET rentaTemp = salarioBase - 1233000;
+  IF salarioBurto > 1233000 THEN
+    SET rentaTemp = salarioBurto - 1233000;
     SET total = total + ((rentaTemp * 15) / 100);
   END IF;
 
-  IF salarioBase > 2163000 THEN
-    SET rentaTemp = salarioBase - 2163000;
+  IF salarioBurto > 2163000 THEN
+    SET rentaTemp = salarioBurto - 2163000;
     SET total = total + ((rentaTemp * 20) / 100);
   END IF;
 
-  IF salarioBase > 4325000 THEN
-    SET rentaTemp = salarioBase - 5000000;
+  IF salarioBurto > 4325000 THEN
+    SET rentaTemp = salarioBurto - 5000000;
     SET total = total + ((rentaTemp * 25) / 100);
   END IF;
 
@@ -148,21 +148,27 @@ BEGIN
 	DECLARE totalPermisos INT DEFAULT 0;
   DECLARE salarioHora DECIMAL(10, 2) DEFAULT 0;
   DECLARE horasJornada INT DEFAULT 0;
-	DECLARE totalBonos INT DEFAULT 0;
+	DECLARE totalViaticos INT DEFAULT 0;
   DECLARE vacacionesUsadas INT DEFAULT 0;
   DECLARE retenciones DECIMAL(10, 2) DEFAULT 0;
 	DECLARE salarioBase DECIMAL(10, 2) DEFAULT 0;
-  DECLARE impuestoRenta DECIMAL(10, 2) DEFAULT 0;
+  -- DECLARE impuestoRenta DECIMAL(10, 2) DEFAULT 0;
 	DECLARE total DECIMAL(10, 2) DEFAULT 0;
 
 	SET salarioBase = (SELECT salario_base(_id, _mes, _anio));
-	SET impuestoRenta = (SELECT impuesto_renta(_id, _mes, _anio));
+	-- SET impuestoRenta = (SELECT impuesto_renta(_id, _mes, _anio));
 
 	IF(SELECT tipo_empleado FROM empleados WHERE id = _id) <> 4 THEN
     SET totalPermisos = (
       SELECT (CASE WHEN (SUM(horas) <> 0) THEN SUM(horas) ELSE 0 END)
       FROM permisos
         WHERE activo = true AND id_empleado = _id AND YEAR(fecha_salida) = _anio AND MONTH(fecha_salida) = _mes
+    );
+
+    SET totalViaticos = (
+      SELECT (CASE WHEN (SUM(monto) <> 0) THEN SUM(monto) ELSE 0 END)
+      FROM viaticos
+        WHERE activo = true AND id_empleado = _id AND YEAR(fecha) = _anio AND MONTH(fecha) = _mes
     );
 
     SET horasExtra = (
@@ -186,13 +192,13 @@ BEGIN
     SET salarioHora = (SELECT salario_hora FROM salarios WHERE activo = true AND id_empleado = _id);
     SET horasJornada = (SELECT jornada FROM salarios WHERE activo = true AND id_empleado = _id);
 
-	  SET total = ((salarioBase - retenciones) + (vacacionesUsadas * salarioHora * horasJornada * -1) + (vacacionesUsadas * salarioHora * horasJornada) + (salarioHora * totalPermisos * -1) + (horasExtra * salarioHora * 1.5) + (totalBonos) + ((((salarioHora * horasJornada) ) ) ));
+	  SET total = ((salarioBase - retenciones) + (vacacionesUsadas * salarioHora * horasJornada * -1) + (vacacionesUsadas * salarioHora * horasJornada) + (salarioHora * totalPermisos * -1) + (horasExtra * salarioHora * 1.5) + (totalViaticos) + ((((salarioHora * horasJornada) ) ) ));
 
   ELSE
     SET total = salarioBase;
   END IF;
 
-  RETURN total - impuestoRenta;
+  RETURN total;
 END$$
 DELIMITER ;
 
