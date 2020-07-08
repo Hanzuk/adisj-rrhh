@@ -99,29 +99,29 @@ CREATE DEFINER=`root`@`localhost` FUNCTION `impuesto_renta`(
   DETERMINISTIC
 BEGIN
   DECLARE rentaTemp INT DEFAULT 0;
-  DECLARE salarioBurto DECIMAL(10, 2) DEFAULT 0;
+  DECLARE salarioBruto DECIMAL(10, 2) DEFAULT 0;
   DECLARE total DECIMAL(10, 2) DEFAULT 0;
 
-	SET salarioBurto = (SELECT salario_bruto(_id, _mes, _anio));
+	SET salarioBruto = (SELECT salario_bruto(_id, _mes, _anio));
 
-  IF salarioBurto > 840000 THEN
-    SET rentaTemp = salarioBurto - 840000;
-    SET total = total + (rentaTemp * 10) / 100;
+  IF salarioBruto > 840000 THEN
+    SET rentaTemp = salarioBruto - 840000;
+    SET total = total + (rentaTemp * 0.1);
   END IF;
 
-  IF salarioBurto > 1233000 THEN
-    SET rentaTemp = salarioBurto - 1233000;
-    SET total = total + ((rentaTemp * 15) / 100);
+  IF salarioBruto > 1233000 THEN
+    SET rentaTemp = salarioBruto - 1233000;
+    SET total = total + (rentaTemp * 0.15) - (rentaTemp * 0.1);
   END IF;
 
-  IF salarioBurto > 2163000 THEN
-    SET rentaTemp = salarioBurto - 2163000;
-    SET total = total + ((rentaTemp * 20) / 100);
+  IF salarioBruto > 2163000 THEN
+    SET rentaTemp = salarioBruto - 2163000;
+    SET total = total + (rentaTemp * 0.2) - (rentaTemp * 0.15);
   END IF;
 
-  IF salarioBurto > 4325000 THEN
-    SET rentaTemp = salarioBurto - 5000000;
-    SET total = total + ((rentaTemp * 25) / 100);
+  IF salarioBruto > 4325000 THEN
+    SET rentaTemp = salarioBruto - 4325000;
+    SET total = total + (rentaTemp * 0.25) - (rentaTemp * 0.2);
   END IF;
 
   RETURN total;
@@ -285,6 +285,10 @@ BEGIN
     SET anioContratacion =  (SELECT YEAR(fecha_contrato) FROM empleados WHERE id = _id);
 
     IF anioContratacion <> YEAR(NOW()) THEN
+      IF (SELECT SUM(monto) FROM viaticos WHERE activo = true AND id_empleado = _id  AND YEAR(fecha) = totalAnio AND MONTH(fecha) = totalMes) <> 0 THEN
+        SET totalBonos = (SELECT SUM(monto) FROM viaticos WHERE activo = true AND id_empleado = _id AND YEAR(fecha) = totalAnio AND MONTH(fecha) = totalMes);
+      END IF;
+
 	    IF (SELECT SUM(cantidad_horas) FROM horas_extras WHERE activo = true AND id_empleado = _id AND id_estado = 2 AND YEAR(fecha) = totalAnio AND MONTH(fecha) = totalMes) <> 0 THEN
 			  SET totalHorasExtra = (SELECT SUM(cantidad_horas) FROM horas_extra WHERE activo = true AND id_estado = 2 AND id_empleado = _id  AND YEAR(fecha) = totalAnio AND MONTH(fecha) = totalMes);
 	    END IF;
