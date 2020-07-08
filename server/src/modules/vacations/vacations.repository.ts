@@ -8,15 +8,13 @@ export class VacationsRepository {
 
   public async getAvailableDays(userId: number): Promise<AvailableVacations> {
     const result = await DB.query(
-      'SELECT id, id_empleado, cantidad FROM vacaciones_disponibles WHERE id_empleado = ?',
+      'SELECT id, id_empleado, cantidad FROM vacaciones_disponibles WHERE id_empleado = ? AND activo = 1;',
       userId
     );
     return { ...result[0] };
   }
 
-  public async updateAvailableDays(
-    newAvailableDays: AvailableVacations
-  ): Promise<void> {
+  public async updateAvailableDays(newAvailableDays: AvailableVacations): Promise<void> {
     await DB.query('UPDATE vacaciones_disponibles SET ? WHERE id = ?;', [
       { cantidad: newAvailableDays.cantidad },
       newAvailableDays.id,

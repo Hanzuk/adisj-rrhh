@@ -41,4 +41,10 @@ export default [
     component: () => import(/* webpackChunkName: "handicaps" */ '../views/spreadsheet/Handicaps.vue'),
     props: true,
   },
+  {
+    path: '/viaticos',
+    name: 'travelExp',
+    meta: { title: 'Viaticos | Adisj', requiresAuth: true },
+    component: () => import(/* webpackChunkName: "travelExp" */ '../views/spreadsheet/TravelExpenses.vue'),
+  },
 ];

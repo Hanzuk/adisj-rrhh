@@ -6,6 +6,7 @@ import permitRoutes from '@/router/permit.js';
 import overtimeRoutes from '@/router/overtime.js';
 import spreadsheetRoutes from '@/router/spreadsheet.js';
 import tasksRoutes from '@/router/tasks.js';
+import vactionsRoutes from '@/router/vacations.js';
 
 Vue.use(VueRouter);
 
@@ -56,6 +57,7 @@ const routes = [
   ...overtimeRoutes,
   ...spreadsheetRoutes,
   ...tasksRoutes,
+  ...vactionsRoutes,
 ];
 
 const router = new VueRouter({

@@ -128,4 +128,16 @@ export default {
   deleteTask(taskId) {
     return api.delete(`/tasks/task/${taskId}`);
   },
+  getAvailableDays() {
+    return api.get(`/vacations/available-days`);
+  },
+  postVacations(data) {
+    return api.post(`/vacations`, data);
+  },
+  getVacations() {
+    return api.get(`/vacations`);
+  },
+  postViatico(data) {
+    return api.post(`/travel-expenses`, data);
+  },
 };

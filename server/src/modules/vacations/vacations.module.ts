@@ -15,15 +15,12 @@ export class VacationsModule {
   }
 
   private setRoutes() {
+    this.router.get('/', Auth.role([Rol.Admin]), this.controller.getVacationsRequests);
+    this.router.post('/', Auth.role([Rol.Chofer, Rol.Secretario, Rol.Admin]), this.controller.createVacationRequest);
     this.router.get(
-      '/',
-      Auth.role([Rol.Admin]),
-      this.controller.getVacationsRequests
-    );
-    this.router.post(
-      '/',
+      '/available-days',
       Auth.role([Rol.Chofer, Rol.Secretario, Rol.Admin]),
-      this.controller.createVacationRequest
+      this.controller.availableDays
     );
   }
 }

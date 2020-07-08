@@ -2,7 +2,7 @@
   <div class="mt-10">
     <div class="container">
       <div class="box">
-        <h4 class="is-size-5 has-text-weight-semibold mb-3">Mis amonestaciones</h4>
+        <h4 class="is-size-5 has-text-weight-semibold mb-3">Mis felicitaciones</h4>
         <div class="columns is-multiline">
           <div v-for="congrat in congrats" :key="congrat.id" class="column is-3">
             <div class="box">
@@ -18,6 +18,15 @@
               </b-field>
               <p class="has-text-grey is-size-6">Hace {{ createdAgo(congrat.fecha) }}</p>
             </div>
+          </div>
+
+          <div v-if="congrats.length === 0" class="column is-full">
+            <section class="section has-text-centered has-text-grey">
+              <p class="mb-3">
+                <b-icon icon="emoticon-sad" size="is-large"> </b-icon>
+              </p>
+              <p>No tienes ninguna felicitación por el momento.</p>
+            </section>
           </div>
         </div>
       </div>
@@ -46,7 +55,6 @@ export default {
     },
   },
   async created() {
-    this.$store.dispatch('employees/fetchEmployees');
     const { data } = await Service.getCongrats();
     this.congrats = data;
   },

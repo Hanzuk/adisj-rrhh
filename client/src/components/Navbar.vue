@@ -24,6 +24,7 @@
         <b-navbar-item tag="router-link" :to="{ name: 'increases' }">Aumentos salariales</b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ name: 'withholding' }">Retenciones salariales</b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ name: 'handicaps' }">Incapacidades</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'travelExp' }">Viáticos</b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Control disciplinario">
         <b-navbar-item tag="router-link" :to="{ name: 'quality-control' }">Calidad servicio de choferes</b-navbar-item>
@@ -33,6 +34,10 @@
       <b-navbar-dropdown label="Tareas">
         <b-navbar-item tag="router-link" :to="{ name: 'new-task' }">Nueva tarea</b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ name: 'tasks' }">Ver tareas</b-navbar-item>
+      </b-navbar-dropdown>
+      <b-navbar-dropdown label="Vacaciones">
+        <b-navbar-item tag="router-link" :to="{ name: 'new-vacation' }">Solicitar vacaciones</b-navbar-item>
+        <b-navbar-item tag="router-link" :to="{ name: 'vacations' }">Ver vacaciones activas</b-navbar-item>
       </b-navbar-dropdown>
     </template>
 

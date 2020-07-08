@@ -8,19 +8,21 @@
             <TaskCard :task="task" />
           </div>
 
-          <div class="column is-full">
-            <section v-if="tasks.length === 0" class="section has-text-centered has-text-grey">
+          <div v-if="tasks.length === 0" class="column is-full">
+            <section class="section has-text-centered has-text-grey">
               <p class="mb-3">
-                <b-icon icon="emoticon-sad" size="is-large"> </b-icon>
+                <b-icon v-if="auth.user.tipo_empleado === 1" icon="emoticon-sad" size="is-large" />
+                <b-icon v-if="auth.user.tipo_empleado !== 1" icon="emoticon-happy" size="is-large" />
               </p>
-              <p>
+              <p v-if="auth.user.tipo_empleado === 1">
                 No se han asigado tareas a los empleados por el momento. <br />
                 Selecciona en el menú
-                <spam class="has-text-weight-bold">
+                <span class="has-text-weight-bold">
                   Tareas > Nueva tarea
-                </spam>
+                </span>
                 para asignar una.
               </p>
+              <p v-if="auth.user.tipo_empleado !== 1">No te han asignado ninguna tarea.</p>
             </section>
           </div>
         </div>
@@ -32,6 +34,8 @@
 <script>
 import TaskCard from '@/components/tasks/TaskCard.vue';
 import Service from '@/services/AdisjService.js';
+import { mapState } from 'vuex';
+
 export default {
   name: 'TaskList',
   components: {
@@ -41,6 +45,9 @@ export default {
     return {
       tasks: [],
     };
+  },
+  computed: {
+    ...mapState(['auth']),
   },
   async created() {
     const { data } = await Service.getTasks();

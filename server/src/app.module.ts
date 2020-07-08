@@ -15,6 +15,7 @@ import { ProfilesModule } from './modules/profiles/profiles.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { WageseModule } from './modules/wages/wages.module';
+import { TravelExpensesModule } from './modules/travelExpenses/travelExpenses.module';
 import Auth from './middleware/auth';
 
 class AppModule {
@@ -48,6 +49,7 @@ class AppModule {
     this.app.use('/v1/reports', Auth.user, new ReportsModule().router);
     this.app.use('/v1/tasks', Auth.user, new TasksModule().router);
     this.app.use('/v1/salary', Auth.user, new WageseModule().router);
+    this.app.use('/v1/travel-expenses', Auth.user, new TravelExpensesModule().router);
   }
 }
 

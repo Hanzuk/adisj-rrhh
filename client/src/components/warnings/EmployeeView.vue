@@ -19,6 +19,15 @@
               <p class="has-text-grey is-size-6">Hace {{ createdAgo(warning.fecha) }}</p>
             </div>
           </div>
+
+          <div v-if="warnings.length === 0" class="column is-full">
+            <section class="section has-text-centered has-text-grey">
+              <p class="mb-3">
+                <b-icon icon="emoticon-happy" size="is-large"> </b-icon>
+              </p>
+              <p>¡Felicidades no tienes ninguna amonestación por el momento!</p>
+            </section>
+          </div>
         </div>
       </div>
     </div>
@@ -46,7 +55,6 @@ export default {
     },
   },
   async created() {
-    this.$store.dispatch('employees/fetchEmployees');
     const { data } = await Service.getWarnings();
     this.warnings = data;
   },

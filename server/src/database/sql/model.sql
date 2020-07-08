@@ -288,3 +288,15 @@ CREATE TABLE felicitaciones (
   CONSTRAINT fk_felicitaciones_id_empleado FOREIGN KEY (id_empleado) REFERENCES empleados(id),
   CONSTRAINT pk_felicitaciones PRIMARY KEY(id)
 );
+
+CREATE TABLE viaticos (
+	id INT auto_increment,
+  id_empleado INT NOT NULL,
+  motivo VARCHAR(200) NOT NULL,
+  monto DECIMAL(10, 2) NOT NULL,
+  fecha DATETIME DEFAULT NOW() NOT NULL,
+  activo BOOLEAN DEFAULT true NOT NULL,
+  CONSTRAINT fk_viaticos_id_empleados FOREIGN KEY (id_empleado) REFERENCES empleados(id),
+  CONSTRAINT ch_viaticos CHECK (monto >= 0),
+  CONSTRAINT pk_viaticos PRIMARY KEY(id)
+);
