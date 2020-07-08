@@ -68,16 +68,28 @@
               height="294"
             >
               <template slot-scope="props">
-                <b-table-column label="Empleado" field="empleado" :searchable="true" width="200">
-                  {{ props.row.empleado }}
+                <b-table-column label="Empleado" field="nombre" :searchable="true">
+                  {{ props.row.nombre }}
                 </b-table-column>
 
-                <b-table-column label="Motivo" width="200">
-                  {{ props.row.descripcion }}
+                <b-table-column label="Apellido" field="p_apellido" :searchable="true">
+                  {{ props.row.p_apellido }}
+                </b-table-column>
+
+                <b-table-column label="Monto">
+                  <b-tag type="is-success">{{ formatAmount(props.row.monto) }}</b-tag>
+                </b-table-column>
+
+                <b-table-column label="Motivo" width="350">
+                  {{ props.row.motivo }}
                 </b-table-column>
 
                 <b-table-column label="Fecha" field="fecha" width="120" sortable centered>
                   <b-tag type="is-light">{{ formatDate(props.row.fecha) }}</b-tag>
+                </b-table-column>
+
+                <b-table-column label="Acciones" centered>
+                  <b-button type="is-danger" icon-right="delete" @click="borrar(props.row.id)" />
                 </b-table-column>
               </template>
             </b-table>
@@ -153,21 +165,41 @@ export default {
           })
         );
 
-        // const { data } = await Service.getCongrats();
-        // this.congrats = data;
+        const { data } = await Service.getViaticos();
+        this.viaticos = data;
 
         this.nombre = '';
         this.amount = '';
 
         this.$buefy.toast.open({
-          duration: 2000,
-          message: 'Felicitacion registrada.',
+          duration: 2500,
+          message: 'Viaticos otorgados con exito.',
           type: 'is-success',
         });
       } catch (error) {
         this.$buefy.toast.open({
-          duration: 2000,
-          message: 'No se pudo registrar la felicitacion.',
+          duration: 2500,
+          message: 'No se pudo otorgar los viaticos.',
+          type: 'is-danger',
+        });
+      }
+    },
+    async borrar(id) {
+      try {
+        await Service.deleteViaticos(id);
+
+        this.$buefy.toast.open({
+          duration: 2500,
+          message: 'Viaticos eliminados con exito.',
+          type: 'is-success',
+        });
+
+        const { data } = await Service.getViaticos();
+        this.viaticos = data;
+      } catch (error) {
+        this.$buefy.toast.open({
+          duration: 2500,
+          message: 'No se pudo eliminar los viaticos.',
           type: 'is-danger',
         });
       }
@@ -175,8 +207,8 @@ export default {
   },
   async created() {
     this.$store.dispatch('employees/fetchEmployees');
-    const { data } = await Service.getCongrats();
-    this.congrats = data;
+    const { data } = await Service.getViaticos();
+    this.viaticos = data;
   },
 };
 </script>

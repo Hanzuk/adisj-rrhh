@@ -140,4 +140,10 @@ export default {
   postViatico(data) {
     return api.post(`/travel-expenses`, data);
   },
+  getViaticos() {
+    return api.get(`/travel-expenses`);
+  },
+  deleteViaticos(id) {
+    return api.delete(`/travel-expenses/${id}`);
+  },
 };
