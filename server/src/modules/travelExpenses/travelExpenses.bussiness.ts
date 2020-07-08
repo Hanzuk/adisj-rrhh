@@ -7,7 +7,11 @@ export class TravelExpensesBusiness {
     return await this.repository.insertTravelExpense(travelEx);
   }
 
-  // public async getAvailableDays(userId: number) {
-  //   return await this.repository.getAvailableDays(userId);
-  // }
+  public getTravelExpense() {
+    return this.repository.getTravelExpense();
+  }
+
+  public async deleteTravelExpense(id: number) {
+    await this.repository.deleteTravelExpense(id);
+  }
 }

@@ -16,11 +16,7 @@ export class TravelExpensesModule {
 
   private setRoutes() {
     this.router.post('/', Auth.role([Rol.Admin]), this.controller.newTravelEx);
-    // this.router.post('/', Auth.role([Rol.Chofer, Rol.Secretario, Rol.Admin]), this.controller.createVacationRequest);
-    // this.router.get(
-    //   '/available-days',
-    //   Auth.role([Rol.Chofer, Rol.Secretario, Rol.Admin]),
-    //   this.controller.availableDays
-    // );
+    this.router.get('/', this.controller.getTravelEx);
+    this.router.delete('/:travelExpId', Auth.role([Rol.Admin]), this.controller.delete);
   }
 }
