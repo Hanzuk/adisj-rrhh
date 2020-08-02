@@ -16,10 +16,6 @@ export class ProfilesModule {
 
   private setRoutes() {
     this.router.get('/', this.controller.myInfo);
-    this.router.put(
-      '/',
-      Auth.role([Rol.Chofer, Rol.Secretario, Rol.Temporal]),
-      this.controller.editInfo
-    );
+    this.router.put('/', this.controller.editInfo);
   }
 }

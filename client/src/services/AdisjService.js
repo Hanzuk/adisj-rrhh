@@ -146,4 +146,10 @@ export default {
   deleteViaticos(id) {
     return api.delete(`/travel-expenses/${id}`);
   },
+  profile() {
+    return api.get(`/profile`);
+  },
+  profileUpdate(info) {
+    return api.put(`/profile`, info);
+  },
 };

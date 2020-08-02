@@ -42,7 +42,7 @@
     </template>
 
     <template slot="end">
-      <b-navbar-item tag="router-link" :to="{ name: 'dashboard' }">
+      <b-navbar-item tag="router-link" :to="{ name: 'profile' }">
         <b-icon icon="account-circle"></b-icon>
         <span class="ml-2">Perfil</span>
       </b-navbar-item>

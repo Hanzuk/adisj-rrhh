@@ -60,30 +60,48 @@ export class ProfilesRepository {
   }
 
   public async editMyInfo(
-    employee: Profile,
-    phones: Phone[],
-    address: Address
+    userId: number,
+    newInfo: {
+      cedula: string;
+      nombre: string;
+      p_apellido: string;
+      s_apellido: string;
+      fecha_nacimiento: Date;
+      codigo_provincia: number;
+      codigo_canton: number;
+      codigo_distrito: number;
+      direccion: string;
+      telefonos: { numero: string; tipo_telefono: number }[];
+    },
+    oldPhones: number[]
   ) {
     await DB.query('UPDATE empleados SET ? WHERE id = ?', [
-      employee,
-      employee.id,
+      {
+        cedula: newInfo.cedula,
+        nombre: newInfo.nombre,
+        p_apellido: newInfo.p_apellido,
+        s_apellido: newInfo.s_apellido,
+        fecha_nacimiento: newInfo.fecha_nacimiento,
+      },
+      userId,
     ]);
 
-    for (const phone of phones) {
-      if (!phone.id) {
-        await DB.query('INSERT INTO telefonos SET ?', {
-          id_empleado: employee.id,
-          ...phone,
-        });
-        continue;
-      }
-
-      await DB.query('UPDATE telefonos SET ? WHERE id = ?', [phone, phone.id]);
+    for await (const phoneId of oldPhones) {
+      DB.query('DELETE FROM telefonos WHERE id = ?;', [phoneId]);
     }
 
+    await DB.query('INSERT INTO telefonos (id_empleado, numero, activo, tipo_telefono) VALUES ?;', [
+      newInfo.telefonos.map((phone) => [userId, phone.numero, true, phone.tipo_telefono]),
+    ]);
+
     await DB.query('UPDATE direcciones SET ? WHERE id_empleado = ?', [
-      address,
-      employee.id,
+      {
+        codigo_provincia: newInfo.codigo_provincia,
+        codigo_canton: newInfo.codigo_canton,
+        codigo_distrito: newInfo.codigo_distrito,
+        direccion: newInfo.direccion,
+      },
+      userId,
     ]);
   }
 }

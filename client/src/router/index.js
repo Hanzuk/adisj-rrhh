@@ -29,6 +29,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
   },
   {
+    path: '/profile',
+    name: 'profile',
+    meta: { title: 'Mi perfil | Adisj', requiresAuth: true, adminOnly: false },
+    component: () => import(/* webpackChunkName: "profile" */ '../views/Profile.vue'),
+  },
+  {
     path: '/calificar-servicio',
     name: 'vote',
     meta: { title: 'Calificar servicio | Adisj', requiresAuth: false },

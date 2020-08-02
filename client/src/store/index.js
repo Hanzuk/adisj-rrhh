@@ -5,6 +5,7 @@ import * as employees from '@/store/modules/employees.js';
 import * as permits from '@/store/modules/permits.js';
 import * as overtime from '@/store/modules/overtime.js';
 import * as quality from '@/store/modules/quality.js';
+import * as profile from '@/store/modules/profile.js';
 
 Vue.use(Vuex);
 
@@ -15,5 +16,6 @@ export default new Vuex.Store({
     permits,
     overtime,
     quality,
+    profile,
   },
 });

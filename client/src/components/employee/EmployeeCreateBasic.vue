@@ -77,6 +77,7 @@
             :day-names="dayNames"
             :month-names="monthNames"
             :first-day-of-week="1"
+            :date-formatter="date => date.toLocaleDateString('es-CR')"
             placeholder="Seleccionar fecha..."
             @input.native="sendDataToParent"
           >
