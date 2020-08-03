@@ -166,11 +166,8 @@ export class UsersController {
       await this.business.update(
         parseInt(req.params.userId),
         {
-          cedula: req.body.cedula,
-          nombre: req.body.nombre,
-          p_apellido: req.body.p_apellido,
-          s_apellido: req.body.s_apellido,
-          fecha_nacimiento: req.body.fecha_nacimiento,
+          correo: req.body.correo,
+          tipo_empleado: req.body.tipo_empleado,
           clave: await hash(req.body.clave, 10),
         },
         {

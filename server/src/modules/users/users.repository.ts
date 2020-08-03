@@ -132,14 +132,22 @@ export class UsersRepository {
   async updateEmployeeBasic(
     userId: number,
     basicData: {
-      cedula: string;
-      nombre: string;
-      p_apellido: string;
-      s_apellido: string;
-      fecha_nacimiento: Date;
+      correo: string;
       clave: string;
+      tipo_empleado: number;
     }
   ): Promise<void> {
+    if (basicData.tipo_empleado === 4) {
+      await Promise.all([
+        DB.query('INSERT INTO empleados_temporales SET ?;', { id_empleado: userId, fecha_salida: '', descripcion: '' }),
+        DB.query('INSERT INTO contratos_empleados_temporales SET ?;', {
+          id_empleado: userId,
+          fecha_salida: '',
+          descripcion: '',
+        }),
+      ]);
+    }
+
     await DB.query('UPDATE empleados SET ? WHERE id = ?;', [basicData, userId]);
   }
 

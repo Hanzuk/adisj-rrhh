@@ -152,4 +152,7 @@ export default {
   profileUpdate(info) {
     return api.put(`/profile`, info);
   },
+  genSalReport(data) {
+    return api.post(`/reports/salary`, data);
+  },
 };

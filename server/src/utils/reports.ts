@@ -22,23 +22,22 @@ export function initReportBuild(reportName: string): ReportInfo {
   const doc = new Document({ padding: 20, font: Times });
   doc.pipe(fs.createWriteStream(path));
 
-  const img = new Image(
-    fs.readFileSync(join(__dirname, '../../public/logo_adisj.jpg'))
-  );
+  const img = new Image(fs.readFileSync(join(__dirname, '../../public/logo_adisj.jpg')));
 
   const header = doc
     .header()
     .table({ widths: [null, null], paddingBottom: 15 })
     .row();
   header.cell().image(img, { height: 100 });
+  const date = format(new Date(), 'MMMM d yyyy', { locale: es });
   header
     .cell()
     .text({ textAlign: 'right' })
-    .add('San Juan, Puriscal, San José, Costa Rica')
+    .add('San Juan, Puriscal, San Jose, Costa Rica')
     .br()
-    .add(format(new Date(), 'd MMMM yyyy', { locale: es }))
+    .add(date.charAt(0).toUpperCase() + date.slice(1))
     .br()
-    .add('Teléfono: 0000-0000', { underline: true, color: 0x00a6fb })
+    .add('Telefono: 0000-0000', { underline: true, color: 0x00a6fb })
     .br()
     .add('Email: adisj@outlook.com', { underline: true, color: 0x00a6fb });
 

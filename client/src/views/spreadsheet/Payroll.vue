@@ -5,9 +5,9 @@
         <div class="column is-full">
           <div class="box">
             <h4 class="title is-4">Consulta de pagos</h4>
-            <b-message type="is-info">
+            <!-- <b-message type="is-info">
               Selecciona el mes y a los empleados que quieres consultarles el pago.
-            </b-message>
+            </b-message> -->
             <b-field>
               <b-datepicker
                 type="month"
@@ -51,7 +51,14 @@
                 </section>
               </template>
             </b-table>
-            <b-button type="is-primary" @click="calcSalary">Consultar</b-button>
+            <div class="buttons">
+              <b-button type="is-primary" @click="calcSalary" :disabled="date === null || checkedRows.length === 0"
+                >Consultar</b-button
+              >
+              <b-button type="is-info" @click="genReport" :disabled="date === null || checkedRows.length === 0"
+                >Generar reporte</b-button
+              >
+            </div>
           </div>
         </div>
 
@@ -83,62 +90,50 @@
                 <b-table-column label="Jornada diaria" width="150" centered>
                   {{ props.row.jornada }}
                 </b-table-column>
-                <b-table-column label="Dias trabajados" width="150" centered>
-                  0
-                </b-table-column>
-                <!-- <b-table-column label="Horas descontadas por permisos" width="300" centered>
-                  0
-                </b-table-column> -->
                 <b-table-column label="Horas extras" width="150" centered>
-                  0
+                  {{ props.row.horas_extras }}
                 </b-table-column>
                 <b-table-column label="Salario bruto" centered>
                   {{ formatSalary(props.row.salario_bruto) }}
                 </b-table-column>
-                <!-- <b-table-column label="C.C.S.S" width="300" centered>
-                  <b-tag type="is-danger">{{ formatSalary(props.row.total_deduccion * -1) }}</b-tag>
+                <b-table-column label="Salario especial" width="150" centered>
+                  +{{ formatSalary(props.row.salario_especial_chofer) }}
                 </b-table-column>
-                <b-table-column label="Impuesto de renta" width="300" centered>
-                  <b-tag type="is-danger">{{ formatSalary(props.row.impuesto_renta * -1) }}</b-tag>
-                </b-table-column> -->
-                <b-table-column label="Salario neto" centered>
-                  {{ formatSalary(props.row.salario_neto) }}
+                <b-table-column label="Salario neto" class="has-text-success" centered>
+                  {{ formatSalary(props.row.salario_neto - props.row.retenciones) }}
                 </b-table-column>
-                <!-- <b-table-column label="Aguinaldo" width="300" centered>
-                  {{ formatSalary(props.row.aguinaldo) }}
-                </b-table-column> -->
               </template>
 
               <template slot="detail" slot-scope="props">
                 <b-field grouped group-multiline>
                   <div class="control">
                     <b-taglist attached>
-                      <b-tag type="is-dark">Retenciones</b-tag>
-                      <b-tag type="is-info">0</b-tag>
+                      <b-tag type="is-dark">Horas descontadas por permisos</b-tag>
+                      <b-tag type="is-danger">{{ props.row.horas_permisos }}</b-tag>
                     </b-taglist>
                   </div>
                   <div class="control">
                     <b-taglist attached>
-                      <b-tag type="is-dark">Horas descontadas por permisos</b-tag>
-                      <b-tag type="is-info">0</b-tag>
+                      <b-tag type="is-dark">Retenciones</b-tag>
+                      <b-tag type="is-danger">{{ formatSalary(props.row.retenciones * -1) }}</b-tag>
                     </b-taglist>
                   </div>
                   <div class="control">
                     <b-taglist attached>
                       <b-tag type="is-dark">Impuesto de renta</b-tag>
-                      <b-tag type="is-info">{{ formatSalary(props.row.impuesto_renta * -1) }}</b-tag>
+                      <b-tag type="is-danger">{{ formatSalary(props.row.impuesto_renta * -1) }}</b-tag>
                     </b-taglist>
                   </div>
                   <div class="control">
                     <b-taglist attached>
                       <b-tag type="is-dark">C.C.S.S</b-tag>
-                      <b-tag type="is-info">{{ formatSalary(props.row.total_deduccion * -1) }}</b-tag>
+                      <b-tag type="is-danger">{{ formatSalary(props.row.total_deduccion * -1) }}</b-tag>
                     </b-taglist>
                   </div>
                   <div class="control">
                     <b-taglist attached>
                       <b-tag type="is-dark">Aguinaldo</b-tag>
-                      <b-tag type="is-info">{{ formatSalary(props.row.aguinaldo) }}</b-tag>
+                      <b-tag type="is-success">{{ formatSalary(props.row.aguinaldo) }}</b-tag>
                     </b-taglist>
                   </div>
                 </b-field>
@@ -193,7 +188,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(['employees']),
+    ...mapState(['employees', 'auth']),
     formatDate() {
       return date => format(new Date(date), 'dd/MM/yyyy');
     },
@@ -216,6 +211,26 @@ export default {
       );
       this.wages = data;
       this.isLoading = false;
+    },
+    async genReport() {
+      try {
+        const { data } = await Service.genSalReport(
+          JSON.stringify({
+            employeesIds: this.employeesIds,
+            year: getYear(new Date(this.date)),
+            month: getMonth(new Date(this.date)) + 1,
+          })
+        );
+
+        const fileURL = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+        const fileLink = document.createElement('a');
+        fileLink.href = fileURL;
+        fileLink.setAttribute('download', 'REPORTE-SALARIOS.pdf');
+        document.body.appendChild(fileLink);
+        fileLink.click();
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
   created() {

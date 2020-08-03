@@ -59,6 +59,9 @@ export class WagesRepository {
     total_deduccion: number;
     salario_especial_chofer?: number;
     total_deduccion_especial?: number;
+    horas_permisos: number;
+    horas_extras: number;
+    retenciones: number;
   }> {
     let specialGrossWage: number;
 
@@ -68,6 +71,18 @@ export class WagesRepository {
       DB.query(`SELECT impuesto_renta(${userId}, ${month}, ${year}) AS impuesto_renta;`, ''),
       DB.query(`SELECT salario_neto(${userId}, ${month}, ${year}) AS salario_neto;`, ''),
       DB.query(`SELECT aguinaldo(${userId}, ${month}, ${year}) AS aguinaldo;`, ''),
+      DB.query(
+        `SELECT (CASE WHEN (SUM(horas) <> 0) THEN SUM(horas) ELSE 0 END) as horas_permisos FROM permisos WHERE MONTH(fecha_solicitud) = ${month} AND YEAR(fecha_solicitud) = ${year} AND id_estado = 2 AND id_empleado = ${userId};`,
+        ''
+      ),
+      DB.query(
+        `SELECT (CASE WHEN (SUM(cantidad_horas) <> 0) THEN SUM(cantidad_horas) ELSE 0 END) as horas_extras FROM horas_extras WHERE MONTH(fecha) = ${month} AND YEAR(fecha) = ${year} AND id_estado = 2 AND id_empleado = ${userId};`,
+        ''
+      ),
+      DB.query(
+        `SELECT (CASE WHEN (SUM(retencion) <> 0) THEN SUM(retencion) ELSE 0 END) as retenciones FROM retenciones_salariales WHERE id_empleado = ${userId} AND activo = 1;`,
+        ''
+      ),
     ]);
 
     // Al salario bruto ya se la aplico la renta
@@ -89,6 +104,9 @@ export class WagesRepository {
         total_deduccion_especial: specialGrossWage * 0.105,
         salario_neto: info[3][0].salario_neto + (specialGrossWage - specialDeduction) - info[2][0].impuesto_renta,
         aguinaldo: info[4][0].aguinaldo,
+        horas_permisos: info[5][0].horas_permisos,
+        horas_extras: info[6][0].horas_extras,
+        retenciones: info[7][0].retenciones,
       };
     }
 
@@ -98,6 +116,9 @@ export class WagesRepository {
       total_deduccion: info[1][0].salario_bruto * 0.105,
       salario_neto: info[3][0].salario_neto - info[2][0].impuesto_renta,
       aguinaldo: info[4][0].aguinaldo,
+      horas_permisos: info[5][0].horas_permisos,
+      horas_extras: info[6][0].horas_extras,
+      retenciones: info[7][0].retenciones,
     };
   }
 

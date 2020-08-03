@@ -35,12 +35,9 @@ export class UsersBusiness {
   async update(
     userId: number,
     basicData: {
-      cedula: string;
-      nombre: string;
-      p_apellido: string;
-      s_apellido: string;
-      fecha_nacimiento: Date;
+      correo: string;
       clave: string;
+      tipo_empleado: number;
     },
     salaryData: { salario_hora: number; jornada: number }
   ) {

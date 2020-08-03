@@ -60,7 +60,7 @@
 
             <b-field grouped>
               <b-field label="Salario" expanded>
-                <span class="ml-2">{{ salary }}</span>
+                <span class="ml-2">{{ salary(profile.salario_hora) }}</span>
               </b-field>
               <b-field label="Jornada" expanded>
                 <p>{{ profile.jornada }}</p>
@@ -111,7 +111,7 @@ export default {
       return date => format(new Date(date), 'dd/MM/yyyy');
     },
     salary() {
-      return numeral(this.info.salario_hora).format('$0,0.00');
+      return amount => numeral(amount).format('$0,0.00');
     },
     formatPhone() {
       return phone => phone.substr(0, 4) + '-' + phone.substr(4, 7);

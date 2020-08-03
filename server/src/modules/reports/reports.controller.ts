@@ -6,11 +6,9 @@ export class ReportsController {
   constructor(private business = new ReportsBusiness()) {}
 
   public generateSalaryReport = async (req: Request, res: Response) => {
-    const { path, filename } = await this.business.generateSalaryPDF();
-    console.log(
-      'ReportsController -> publicgenerateSalaryReport -> path',
-      path
-    );
+    const { employeesIds, year, month } = req.body;
+
+    const { path, filename } = await this.business.generateSalaryPDF(employeesIds, year, month);
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
