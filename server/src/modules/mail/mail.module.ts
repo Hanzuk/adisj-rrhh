@@ -14,5 +14,7 @@ export class MailModule {
 
   private setRoutes() {
     this.router.post('/credentials', this.controller.sendCredentials);
+    this.router.post('/new-username', this.controller.newUsername);
+    this.router.post('/new-credentials', this.controller.newUsernameAndPass);
   }
 }

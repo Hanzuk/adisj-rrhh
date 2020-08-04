@@ -129,26 +129,70 @@ export class UsersRepository {
     return [...result];
   }
 
-  async updateEmployeeBasic(
-    userId: number,
-    basicData: {
-      correo: string;
-      clave: string;
-      tipo_empleado: number;
-    }
-  ): Promise<void> {
-    if (basicData.tipo_empleado === 4) {
-      await Promise.all([
-        DB.query('INSERT INTO empleados_temporales SET ?;', { id_empleado: userId, fecha_salida: '', descripcion: '' }),
-        DB.query('INSERT INTO contratos_empleados_temporales SET ?;', {
-          id_empleado: userId,
-          fecha_salida: '',
-          descripcion: '',
-        }),
-      ]);
+  async updateEmployeeBasic(data: {
+    userId: number;
+    correo: string;
+    jornada: number;
+    salario_hora: number;
+    tipo_empleado: number;
+    descripcion: string;
+    fecha_salida: Date;
+    clave: string;
+    fecha_contrato: Date;
+    dias: number;
+  }): Promise<void> {
+    const info = await Promise.all([
+      DB.query('SELECT clave FROM empleados WHERE id = ?;', [data.userId]),
+      DB.query('SELECT salario_hora FROM salarios WHERE id_empleado = ?;', [data.userId]),
+    ]);
+
+    if (data.salario_hora > info[1][0].salario_hora) {
+      throw new Error('Los aumentos salariales no se pueden realizar aqui');
     }
 
-    await DB.query('UPDATE empleados SET ? WHERE id = ?;', [basicData, userId]);
+    if (data.tipo_empleado === 4) {
+      await Promise.all([
+        DB.query('INSERT INTO empleados_temporales SET ?;', {
+          id_empleado: data.userId,
+          fecha_salida: data.fecha_salida,
+          descripcion: data.descripcion,
+        }),
+        DB.query('INSERT INTO contratos_empleados_temporales SET ?;', {
+          id_empleado: data.userId,
+          fecha_salida: data.fecha_salida,
+          fecha_contrato: data.fecha_contrato,
+          dias: data.dias,
+          descripcion: data.descripcion,
+        }),
+        DB.query('UPDATE empleados SET ? WHERE id = ?;', [
+          {
+            correo: data.correo,
+            clave: data.clave ? data.clave : info[0][0].clave,
+            tipo_empleado: data.tipo_empleado,
+          },
+          data.userId,
+        ]),
+        DB.query('UPDATE salarios SET ? WHERE id_empleado = ?;', [
+          { salario_hora: data.salario_hora, jornada: data.jornada },
+          data.userId,
+        ]),
+      ]);
+
+      return;
+    }
+
+    await Promise.all([
+      DB.query('DELETE FROM contratos_empleados_temporales WHERE id_empleado = ?;', [data.userId]),
+      DB.query('DELETE FROM empleados_temporales WHERE id_empleado = ?;', [data.userId]),
+      DB.query('UPDATE empleados SET ? WHERE id = ?;', [
+        { correo: data.correo, clave: data.clave ? data.clave : info[0][0].clave, tipo_empleado: data.tipo_empleado },
+        data.userId,
+      ]),
+      DB.query('UPDATE salarios SET ? WHERE id_empleado = ?;', [
+        { salario_hora: data.salario_hora, jornada: data.jornada },
+        data.userId,
+      ]),
+    ]);
   }
 
   async updateEmployeeSalary(userId: number, salaryData: { salario_hora: number; jornada: number }): Promise<void> {

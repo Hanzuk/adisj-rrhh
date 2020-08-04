@@ -13,6 +13,11 @@
                 Editar
               </button>
             </div>
+            <div class="control" v-if="employee.tipo_empleado == 4">
+              <button class="button is-warning" @click="openReHire">
+                Re-contratar
+              </button>
+            </div>
             <div class="control">
               <button class="button is-danger" @click="openFireModal">
                 Despedir
@@ -202,6 +207,7 @@
 <script>
 import EmployeeFire from '@/components/employee/EmployeeFire.vue';
 import EmployeeUpdate from '@/components/employee/EmployeeUpdate.vue';
+import EmployeeRehire from '@/components/employee/EmployeeReHire.vue';
 import { mapState, mapGetters } from 'vuex';
 import store from '@/store';
 import { format, formatDistanceToNow, formatDistance } from 'date-fns';
@@ -276,6 +282,14 @@ export default {
         component: EmployeeUpdate,
         trapFocus: true,
         width: 600,
+      });
+    },
+    openReHire() {
+      this.$buefy.modal.open({
+        parent: this,
+        component: EmployeeRehire,
+        trapFocus: true,
+        width: 520,
       });
     },
   },

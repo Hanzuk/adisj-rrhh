@@ -162,19 +162,29 @@ export class UsersController {
   };
 
   public updateEmployee = async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const { correo, jornada, salario_hora, tipo_empleado, fecha_salida, descripcion, clave } = req.body;
+
+    let newpassword: string;
+
+    if (clave) {
+      newpassword = await hash(clave, 10);
+    }
+
     try {
-      await this.business.update(
-        parseInt(req.params.userId),
-        {
-          correo: req.body.correo,
-          tipo_empleado: req.body.tipo_empleado,
-          clave: await hash(req.body.clave, 10),
-        },
-        {
-          salario_hora: req.body.salario_hora,
-          jornada: req.body.jornada,
-        }
-      );
+      const fecha_contrato = new Date();
+      await this.business.update({
+        userId: parseInt(userId),
+        correo,
+        jornada,
+        salario_hora,
+        tipo_empleado,
+        clave: newpassword,
+        descripcion,
+        dias: differenceInCalendarDays(new Date(fecha_salida), fecha_contrato),
+        fecha_contrato,
+        fecha_salida,
+      });
 
       return res.status(200).send({
         message: 'Datos del empleado actuailizados',
@@ -182,8 +192,7 @@ export class UsersController {
     } catch (error) {
       return res.status(400).send({
         message: 'No se pudo actualzar los datos del empleado',
-        error,
-        err_message: error.message,
+        error: error.message,
       });
     }
   };

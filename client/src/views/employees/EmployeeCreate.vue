@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <!-- {{ newEmployeeData }} -->
+    <b-loading :is-full-page="true" :active.sync="isLoading"></b-loading>
     <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="mt-10">
       <div class="card">
         <div class="card-content">
@@ -58,6 +58,7 @@ export default {
   data() {
     return {
       newEmployeeData: {},
+      isLoading: false,
     };
   },
   async beforeRouteEnter(to, from, next) {
@@ -78,22 +79,37 @@ export default {
       this.newEmployeeData = { ...this.newEmployeeData, ...data };
     },
     async saveEmployee() {
+      this.isLoading = true;
+
       try {
         if (this.newEmployeeData.tipo_empleado == 4) {
           await Service.postTemporary(JSON.stringify({ ...this.newEmployeeData, activo: true }));
         } else {
           await Service.postPermanent(JSON.stringify({ ...this.newEmployeeData, activo: true }));
         }
+
+        await Service.sendCredentials(
+          JSON.stringify({
+            to: this.newEmployeeData.correo,
+            name: this.newEmployeeData.nombre,
+            email: this.newEmployeeData.correo,
+            password: this.newEmployeeData.clave,
+          })
+        );
+
+        this.isLoading = false;
+
         this.$buefy.toast.open({
           duration: 3000,
           message: 'Empleado guardado con éxito.',
           type: 'is-success',
         });
       } catch (error) {
+        this.isLoading = false;
+
         this.$buefy.toast.open({
           duration: 3000,
           message: 'No se pudo guardar el empleado.',
-          // position: 'is-bottom',
           type: 'is-danger',
         });
       }

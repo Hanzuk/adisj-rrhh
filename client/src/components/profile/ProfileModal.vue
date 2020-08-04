@@ -320,6 +320,14 @@ export default {
           }),
           oldPhones: this.oldPhones,
         });
+
+        this.$parent.close();
+
+        this.$buefy.toast.open({
+          duration: 2500,
+          message: 'Tu Información ha sido actualizada.',
+          type: 'is-success',
+        });
       } catch (error) {
         console.log(error);
         this.$buefy.toast.open({

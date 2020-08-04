@@ -30,9 +30,6 @@ export class UsersModule {
     //Actualiza la informacion de un empleado
     this.router.put('/:userId', Auth.role([Rol.Admin]), this.controller.updateEmployee);
 
-    //Empleado cualquiera actuliza su informacion de contacto
-    // this.router.put('/:userId/contact', this.controller.updateContact);
-
     //Re-contrata un empleado temporal
     this.router.put('/:userId/re-hire', Auth.role([Rol.Admin]), this.controller.rehire);
 

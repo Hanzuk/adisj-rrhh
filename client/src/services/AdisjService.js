@@ -155,4 +155,19 @@ export default {
   genSalReport(data) {
     return api.post(`/reports/salary`, data);
   },
+  putEmployee(employeeId, data) {
+    return api.put(`/users/${employeeId}`, data);
+  },
+  rehire(employeeId, data) {
+    return api.put(`/users/${employeeId}/re-hire`, data);
+  },
+  sendCredentials(data) {
+    return api.post(`/mail/credentials`, data);
+  },
+  sendNewUsername(data) {
+    return api.post(`/mail/new-username`, data);
+  },
+  sendNewCredentials(data) {
+    return api.post(`/mail/new-credentials`, data);
+  },
 };

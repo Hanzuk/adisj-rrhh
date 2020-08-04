@@ -46,7 +46,7 @@
           :type="{ 'is-danger': errors[0], 'is-success': valid }"
           expanded
         >
-          <b-input v-model="daytime" @input="sendDataToParent"></b-input>
+          <b-numberinput v-model="daytime" min="1" max="12" :editable="false" @input="sendDataToParent"></b-numberinput>
         </b-field>
       </ValidationProvider>
     </div>
@@ -98,7 +98,7 @@ export default {
       employeeType: null,
       salary: '',
       rawSalary: 0,
-      daytime: '',
+      daytime: null,
       description: '',
       outDate: null,
       dayNames: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],

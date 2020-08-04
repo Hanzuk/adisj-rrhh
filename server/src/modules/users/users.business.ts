@@ -32,21 +32,19 @@ export class UsersBusiness {
     return await this.repository.getAllEmployees();
   }
 
-  async update(
-    userId: number,
-    basicData: {
-      correo: string;
-      clave: string;
-      tipo_empleado: number;
-    },
-    salaryData: { salario_hora: number; jornada: number }
-  ) {
-    const { salario_hora } = await this.repository.getOneEmployee(userId);
-
-    if (salaryData.salario_hora > salario_hora) throw new Error('Los aumentos al salario no se pueden realizar aqui');
-
-    await this.repository.updateEmployeeBasic(userId, basicData);
-    await this.repository.updateEmployeeSalary(userId, salaryData);
+  async update(data: {
+    userId: number;
+    correo: string;
+    jornada: number;
+    salario_hora: number;
+    tipo_empleado: number;
+    descripcion: string;
+    fecha_salida: Date;
+    clave: string;
+    fecha_contrato: Date;
+    dias: number;
+  }) {
+    await this.repository.updateEmployeeBasic(data);
   }
 
   async reHire(rehireData: ITemporaryContract) {
