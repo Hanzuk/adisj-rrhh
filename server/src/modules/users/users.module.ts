@@ -16,7 +16,7 @@ export class UsersModule {
 
   private setRoutes() {
     //Obtiene todos los empleados
-    this.router.get('/', Auth.role([Rol.Admin]), this.controller.findEmployees);
+    this.router.get('/', Auth.role([Rol.Admin, Rol.Secretario]), this.controller.findEmployees);
 
     //Obtiene un empleado especifico
     this.router.get('/:userId', this.controller.findEmployee);

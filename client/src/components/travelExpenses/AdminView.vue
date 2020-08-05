@@ -4,7 +4,7 @@
       <div class="columns is-multiline">
         <div class="column is-3">
           <div class="box">
-            <h5 class="title is-5">Nuevos viaticos</h5>
+            <h5 class="title is-5">Nuevos viáticos</h5>
             <ValidationObserver ref="observer" v-slot="{ invalid, reset }" tag="div" class="columns is-multiline">
               <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-full">
                 <b-field label="Empleado" :message="errors" :type="{ 'is-danger': errors[0] }">
@@ -21,7 +21,12 @@
                 </b-field>
               </ValidationProvider>
 
-              <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-full">
+              <ValidationProvider
+                :rules="{ required: true, alpha_spaces: /^[a-zA-Z .,]*$/ }"
+                v-slot="{ errors }"
+                tag="div"
+                class="column is-full"
+              >
                 <b-field label="Motivo" :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
                   <b-input v-model="reason"></b-input>
                 </b-field>
@@ -47,7 +52,7 @@
                   "
                   :disabled="invalid"
                   expanded
-                  >Otorgar viaticos</b-button
+                  >Otorgar viáticos</b-button
                 >
               </div>
             </ValidationObserver>
@@ -56,7 +61,7 @@
 
         <div class="column is-9">
           <div class="box">
-            <h5 class="title is-5">Viaticos otorgados</h5>
+            <h5 class="title is-5">Viáticos otorgados</h5>
             <b-table
               :data="viaticos"
               :narrowed="true"
@@ -88,7 +93,7 @@
                   <b-tag type="is-light">{{ formatDate(props.row.fecha) }}</b-tag>
                 </b-table-column>
 
-                <b-table-column label="Acciones" centered>
+                <b-table-column label="Eliminar" centered>
                   <b-button type="is-danger" icon-right="delete" @click="borrar(props.row.id)" />
                 </b-table-column>
               </template>
@@ -169,11 +174,12 @@ export default {
         this.viaticos = data;
 
         this.nombre = '';
+        this.reason = '';
         this.amount = '';
 
         this.$buefy.toast.open({
           duration: 2500,
-          message: 'Viaticos otorgados con exito.',
+          message: 'Viáticos otorgados con exito.',
           type: 'is-success',
         });
       } catch (error) {

@@ -15,7 +15,7 @@ export class WageseModule {
   }
 
   private setRoutes() {
-    this.router.post('/calc-wages', Auth.role([Rol.Admin]), this.controller.calcSalary);
+    this.router.post('/calc-wages', Auth.role([Rol.Admin, Rol.Secretario]), this.controller.calcSalary);
     this.router.post('/:userId/increase', Auth.role([Rol.Admin]), this.controller.increaseSalary);
     this.router.get('/increases', Auth.role([Rol.Admin]), this.controller.increases);
     this.router.post('/retention', Auth.role([Rol.Admin]), this.controller.newRetention);

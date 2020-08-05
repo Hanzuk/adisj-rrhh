@@ -5,7 +5,7 @@ export default [
     meta: {
       title: 'Calcular salario | Adisj',
       requiresAuth: true,
-      adminOnly: true,
+      adminOnly: false,
     },
     component: () => import(/* webpackChunkName: "payroll" */ '../views/spreadsheet/Payroll.vue'),
   },

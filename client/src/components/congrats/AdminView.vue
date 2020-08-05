@@ -4,7 +4,7 @@
       <div class="columns is-multiline">
         <div class="column is-3">
           <div class="box">
-            <h5 class="title is-5">Nueva felicitacion</h5>
+            <h5 class="title is-5">Nueva felicitación</h5>
             <ValidationObserver ref="observer" v-slot="{ invalid, reset }" tag="div" class="columns is-multiline">
               <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-full">
                 <b-field label="Empleado" :message="errors" :type="{ 'is-danger': errors[0] }">
@@ -21,7 +21,12 @@
                 </b-field>
               </ValidationProvider>
 
-              <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-full">
+              <ValidationProvider
+                :rules="{ required: true, alpha_spaces: /^[a-zA-Z0-9 .,]*$/ }"
+                v-slot="{ errors }"
+                tag="div"
+                class="column is-full"
+              >
                 <b-field label="Motivo" :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
                   <b-input v-model="reason"></b-input>
                 </b-field>
@@ -36,7 +41,7 @@
                   "
                   :disabled="invalid"
                   expanded
-                  >Aplicar felicitacion</b-button
+                  >Aplicar felicitación</b-button
                 >
               </div>
             </ValidationObserver>

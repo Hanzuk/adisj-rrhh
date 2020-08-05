@@ -67,7 +67,7 @@
             <h4 class="title is-4">Detalles</h4>
             <b-message type="is-info">
               <p>El porcentaje de cargas sociales corresponde a un 10.5%.</p>
-              <p>Expande la fila para ver mas informacion.</p>
+              <p>Expande la fila para ver más información.</p>
             </b-message>
             <b-table
               :data="wages"
@@ -145,7 +145,7 @@
                     <p>
                       <b-icon icon="emoticon-sad" size="is-large"> </b-icon>
                     </p>
-                    <p>Nothing here.</p>
+                    <p>No se pudo cargar los salarios.</p>
                   </div>
                 </section>
               </template>
@@ -202,15 +202,19 @@ export default {
   methods: {
     async calcSalary() {
       this.isLoading = true;
-      const { data } = await Service.getSalary(
-        JSON.stringify({
-          employeesIds: this.employeesIds,
-          year: getYear(new Date(this.date)),
-          month: getMonth(new Date(this.date)) + 1,
-        })
-      );
-      this.wages = data;
-      this.isLoading = false;
+      try {
+        const { data } = await Service.getSalary(
+          JSON.stringify({
+            employeesIds: this.employeesIds,
+            year: getYear(new Date(this.date)),
+            month: getMonth(new Date(this.date)) + 1,
+          })
+        );
+        this.isLoading = false;
+        this.wages = data;
+      } catch (error) {
+        this.isLoading = false;
+      }
     },
     async genReport() {
       try {

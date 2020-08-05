@@ -170,4 +170,10 @@ export default {
   sendNewCredentials(data) {
     return api.post(`/mail/new-credentials`, data);
   },
+  dashAmind() {
+    return api.get(`/dashboard/dashboard-admin`);
+  },
+  dashEmployee() {
+    return api.get(`/dashboard/dashboard-employee`);
+  },
 };
