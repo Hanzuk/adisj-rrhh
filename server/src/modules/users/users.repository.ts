@@ -144,31 +144,34 @@ export class UsersRepository {
     const info = await Promise.all([
       DB.query('SELECT clave FROM empleados WHERE id = ?;', [data.userId]),
       DB.query('SELECT salario_hora FROM salarios WHERE id_empleado = ?;', [data.userId]),
+      DB.query('SELECT id FROM empleados_temporales WHERE id_empleado = ?;', [data.userId]),
     ]);
+
+    // console.log(info[2]);
+    // if (info[2]) {
+    //   console.log(true);
+    //   return;
+    // }
 
     if (data.salario_hora > info[1][0].salario_hora) {
       throw new Error('Los aumentos salariales no se pueden realizar aqui');
     }
 
-    if (data.tipo_empleado === 4) {
+    if (info[2]) {
       await Promise.all([
-        DB.query('INSERT INTO empleados_temporales SET ?;', {
-          id_empleado: data.userId,
-          fecha_salida: data.fecha_salida,
-          descripcion: data.descripcion,
-        }),
-        DB.query('INSERT INTO contratos_empleados_temporales SET ?;', {
-          id_empleado: data.userId,
-          fecha_salida: data.fecha_salida,
-          fecha_contrato: data.fecha_contrato,
-          dias: data.dias,
-          descripcion: data.descripcion,
-        }),
-        DB.query('UPDATE empleados SET ? WHERE id = ?;', [
+        DB.query('UPDATE empleados_temporales SET ? WHERE id_empleado = ?;', [
           {
-            correo: data.correo,
-            clave: data.clave ? data.clave : info[0][0].clave,
-            tipo_empleado: data.tipo_empleado,
+            fecha_salida: data.fecha_salida,
+            descripcion: data.descripcion,
+          },
+          data.userId,
+        ]),
+        DB.query('UPDATE contratos_empleados_temporales SET ? WHERE id_empleado = ? AND activo = 1;', [
+          {
+            fecha_salida: data.fecha_salida,
+            fecha_contrato: data.fecha_contrato,
+            dias: data.dias,
+            descripcion: data.descripcion,
           },
           data.userId,
         ]),
@@ -179,6 +182,37 @@ export class UsersRepository {
       ]);
 
       return;
+    } else {
+      if (data.tipo_empleado === 4) {
+        await Promise.all([
+          DB.query('INSERT INTO empleados_temporales SET ?;', {
+            id_empleado: data.userId,
+            fecha_salida: data.fecha_salida,
+            descripcion: data.descripcion,
+          }),
+          DB.query('INSERT INTO contratos_empleados_temporales SET ?;', {
+            id_empleado: data.userId,
+            fecha_salida: data.fecha_salida,
+            fecha_contrato: data.fecha_contrato,
+            dias: data.dias,
+            descripcion: data.descripcion,
+          }),
+          DB.query('UPDATE empleados SET ? WHERE id = ?;', [
+            {
+              correo: data.correo,
+              clave: data.clave ? data.clave : info[0][0].clave,
+              tipo_empleado: data.tipo_empleado,
+            },
+            data.userId,
+          ]),
+          DB.query('UPDATE salarios SET ? WHERE id_empleado = ?;', [
+            { salario_hora: data.salario_hora, jornada: data.jornada },
+            data.userId,
+          ]),
+        ]);
+
+        return;
+      }
     }
 
     await Promise.all([

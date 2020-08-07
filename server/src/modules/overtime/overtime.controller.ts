@@ -37,11 +37,7 @@ export class OvertimeController {
       if (res.locals.authenticated.tipo_empleado !== Rol.Admin) {
         return res
           .status(200)
-          .send(
-            overtimeRequests.filter(
-              (request) => request.id_empleado === res.locals.authenticated.id
-            )
-          );
+          .send(overtimeRequests.filter((request) => request.id_empleado === res.locals.authenticated.id));
       }
 
       return res.status(200).send(overtimeRequests);

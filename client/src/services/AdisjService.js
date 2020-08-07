@@ -59,6 +59,9 @@ export default {
   async putOvertimeEmployee(id, data) {
     return await api.put(`/overtime/${id}`, data);
   },
+  async deleteOvertime(id) {
+    return await api.delete(`/overtime/${id}`);
+  },
   async getDrivers() {
     return await api.get('/quality/drivers');
   },

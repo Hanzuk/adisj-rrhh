@@ -10,10 +10,6 @@ export const mutations = {
   SET_OVERTIME(state, requests) {
     state.overtimeRequests = requests;
   },
-  // REMOVE_PERMIT(state, permitId) {
-  //   const index = state.overtimeRequests.findIndex(item => item.id === permitId);
-  //   state.overtimeRequests.splice(index, 1);
-  // },
   ACCEPT_OVERTIME(state, id) {
     const index = state.overtimeRequests.findIndex(item => item.id === id);
     state.overtimeRequests[index].id_estado = 2;
@@ -35,9 +31,6 @@ export const actions = {
     const { data } = await Service.getOvertime();
     commit('SET_OVERTIME', data);
   },
-  // deletePermit({ commit }, id) {
-  //   commit('REMOVE_PERMIT', id);
-  // },
   acceptOvertime({ commit }, id) {
     commit('ACCEPT_OVERTIME', id);
   },
@@ -51,13 +44,13 @@ export const actions = {
 
 export const getters = {
   pendingOvertime(state) {
-    return state.overtimeRequests.filter(request => request.id_estado === 1);
+    return state.overtimeRequests.filter(request => request.id_estado === 1).reverse();
   },
   approvedOvertime(state) {
-    return state.overtimeRequests.filter(request => request.id_estado === 2);
+    return state.overtimeRequests.filter(request => request.id_estado === 2).reverse();
   },
   rejectedOvertime(state) {
-    return state.overtimeRequests.filter(request => request.id_estado === 3);
+    return state.overtimeRequests.filter(request => request.id_estado === 3).reverse();
   },
   getOvertime(state) {
     return id => state.overtimeRequests.find(overtime => overtime.id === id);

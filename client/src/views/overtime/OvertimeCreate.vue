@@ -61,8 +61,22 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
+import { ValidationProvider, ValidationObserver, extend } from 'vee-validate';
 import Service from '@/services/AdisjService.js';
+import { max_value, numeric, max } from 'vee-validate/dist/rules';
+
+extend('max_value', {
+  ...max_value,
+  message: '¡Esas son muchas horas! Intenta con menos.',
+});
+extend('numeric', {
+  ...numeric,
+  message: 'Solo caracteres numericos.',
+});
+extend('max', {
+  ...max,
+  message: 'La descripción excede el límite.',
+});
 
 export default {
   name: 'OvertimeCreate',

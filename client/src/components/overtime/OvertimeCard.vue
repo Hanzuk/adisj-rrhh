@@ -29,7 +29,7 @@
       <a class="card-footer-item" v-if="userType === 1" @click="accept(overtimeRequest.id)">Aceptar</a>
       <a class="card-footer-item" v-if="userType === 1" @click="reject(overtimeRequest.id)">Rechazar</a>
       <a class="card-footer-item" v-if="userType !== 1" @click="openUpdateModal(overtimeRequest.id)">Editar</a>
-      <a class="card-footer-item" @click="remove(overtimeRequest.id)">Borrar</a>
+      <a class="card-footer-item" v-if="userType === 1" @click="remove(overtimeRequest.id)">Borrar</a>
     </footer>
   </div>
 </template>
@@ -80,7 +80,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('overtime', ['acceptOvertime', 'rejectOvertime']),
+    ...mapActions('overtime', ['acceptOvertime', 'rejectOvertime', 'deleteOvertime']),
     async accept(id) {
       try {
         await Service.putOvertime(id, JSON.stringify({ id_estado: 2 }));
@@ -114,6 +114,34 @@ export default {
           type: 'is-danger',
         });
       }
+    },
+    remove(overTimeId) {
+      this.$buefy.dialog.confirm({
+        title: `Borrar horas extras`,
+        message: '¿Seguro que quieres <b>borrar</b> estas horas extras? Esta acción no se puede revertir.',
+        confirmText: 'Borrar',
+        cancelText: 'Cancelar',
+        type: 'is-danger',
+        hasIcon: true,
+        onConfirm: async () => {
+          try {
+            await Service.deleteOvertime(overTimeId);
+            this.deleteOvertime(overTimeId);
+            this.$buefy.toast.open({
+              duration: 3000,
+              message: '¡Éxito al borrar las horas extras!',
+              type: 'is-success',
+            });
+          } catch (error) {
+            this.$parent.close();
+            this.$buefy.toast.open({
+              duration: 3000,
+              message: '¡Hubo un error al borrar las horas extras!',
+              type: 'is-danger',
+            });
+          }
+        },
+      });
     },
     openUpdateModal(id) {
       this.$buefy.modal.open({

@@ -7,7 +7,7 @@
     <div class="card-content">
       <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="columns is-multiline">
         <ValidationProvider
-          :rules="{ required: true, myEmail: myEmailRegex }"
+          :rules="{ required: true, myEmail: /^\S[a-z0-9\_\-\.]+@[a-z]+(\.\w{2,3}|\.\w{2,3}\.\w{2,3})$/ }"
           v-slot="{ errors, valid }"
           tag="div"
           class="column is-half"
@@ -200,7 +200,6 @@ export default {
         },
       },
       isLoading: false,
-      myEmailRegex: /^(([^<>()[\]\\.,;:!#$%^&+*\s@"]+(\.[^<>()\\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     };
   },
   created() {
@@ -209,6 +208,8 @@ export default {
     this.salary = numeral(this.employee.salario_hora).format('$0,0.00');
     this.rawSalary = this.employee.salario_hora;
     this.employeeType = this.employee.tipo_empleado;
+    this.description = this.employee.info_contrato.actual.descripcion;
+    this.outDate = new Date(this.employee.info_contrato.actual.fecha_salida);
   },
   methods: {
     setRawSalary(event) {

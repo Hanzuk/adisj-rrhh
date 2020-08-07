@@ -44,7 +44,8 @@ export class PermissionsController {
             permissions.filter(
               (permission) =>
                 permission.id_empleado === parseInt(res.locals.authenticated.id) &&
-                Boolean(permission.solo_admin) === false
+                Boolean(permission.solo_admin) === false &&
+                Boolean(permission.activo) === true
             )
           );
       }

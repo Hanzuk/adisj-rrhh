@@ -18,17 +18,9 @@ export class PermissionsModule {
     //Obtiene todos los permisos
     this.router.get('/', this.controller.findAll);
     //Crea un nuevo permiso
-    this.router.post(
-      '/',
-      Auth.role([Rol.Chofer, Rol.Secretario, Rol.Temporal]),
-      this.controller.create
-    );
+    this.router.post('/', Auth.role([Rol.Chofer, Rol.Secretario, Rol.Temporal]), this.controller.create);
     //Actuliza un permiso
-    this.router.put(
-      '/:permissionId/mark-as',
-      Auth.role([Rol.Admin]),
-      this.controller.updateAdmin
-    );
+    this.router.put('/:permissionId/mark-as', Auth.role([Rol.Admin]), this.controller.updateAdmin);
     this.router.put('/:permissionId', this.controller.update);
     this.router.delete('/:permissionId', this.controller.delete);
   }

@@ -158,7 +158,7 @@ export default {
         this.title = '';
         this.description = '';
         this.outDate = null;
-        this.hours = '';
+        this.hours = null;
 
         this.$buefy.toast.open({
           duration: 3000,

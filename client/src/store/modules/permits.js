@@ -53,13 +53,13 @@ export const actions = {
 
 export const getters = {
   pendingPermits(state) {
-    return state.permits.filter(permit => permit.id_estado === 1);
+    return state.permits.filter(permit => permit.id_estado === 1).reverse();
   },
   approvedPermits(state) {
-    return state.permits.filter(permit => permit.id_estado === 2);
+    return state.permits.filter(permit => permit.id_estado === 2).reverse();
   },
   rejectedPermits(state) {
-    return state.permits.filter(permit => permit.id_estado === 3);
+    return state.permits.filter(permit => permit.id_estado === 3).reverse();
   },
   getPermit(state) {
     return id => state.permits.find(permit => permit.id === id);

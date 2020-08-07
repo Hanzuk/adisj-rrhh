@@ -8,7 +8,7 @@
           </div>
           <div class="column is-full">
             <ValidationProvider
-              :rules="{ required: true, myEmail: /^\S[a-z0-9_]+@[\w]+(\.\w{2,3}|\.\w{2,3}\.\w{2,3})$/ }"
+              :rules="{ required: true, myEmail: /^\S[a-z0-9\_\-\.]+@[a-z]+(\.\w{2,3}|\.\w{2,3}\.\w{2,3})$/ }"
               v-slot="{ errors }"
               tag="div"
             >
