@@ -44,6 +44,7 @@ export class TasksRepository {
         , t.descripcion
         , CONCAT(e.nombre, ' ', e.p_apellido) AS asignada_a
         , t.fecha_asignacion
+        , t.transporte
       FROM tareas t
       INNER JOIN empleados e ON t.id_empleado = e.id
       ORDER BY t.fecha_asignacion DESC;`,

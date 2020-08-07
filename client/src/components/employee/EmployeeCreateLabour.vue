@@ -51,7 +51,12 @@
       </ValidationProvider>
     </div>
     <div class="columns" v-if="employeeType == 4">
-      <ValidationProvider rules="required" v-slot="{ errors, valid }" tag="div" class="column">
+      <ValidationProvider
+        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\sñáéíóú]*$/ }"
+        v-slot="{ errors, valid }"
+        tag="div"
+        class="column"
+      >
         <b-field
           label="Contratado para"
           :message="errors"

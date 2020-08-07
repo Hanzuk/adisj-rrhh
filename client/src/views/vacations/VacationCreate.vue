@@ -1,65 +1,75 @@
 <template>
-  <div class="mt-10">
-    <div class="container">
-      <div class="columns is-multiline is-centered">
-        <div class="column is-7">
-          <div class="box">
-            <h5 class="title is-5">Nueva solicitud de vacaciones</h5>
-            <ValidationObserver ref="observer" v-slot="{ invalid, reset }" tag="div" class="columns is-multiline">
-              <div class="column is-half">
-                <div class="columns is-multiline">
-                  <div class="column is-full">
-                    <nav class="level">
-                      <div class="level-item has-text-centered">
-                        <div>
-                          <p class="heading">Días disponibles</p>
-                          <p class="title">{{ availableDays.cantidad || 0 }}</p>
+  <div>
+    <Navbar />
+    <div class="mt-10">
+      <div class="container">
+        <div class="columns is-multiline is-centered">
+          <div class="column is-7">
+            <div class="box">
+              <h5 class="title is-5">Nueva solicitud de vacaciones</h5>
+              <ValidationObserver ref="observer" v-slot="{ invalid, reset }" tag="div" class="columns is-multiline">
+                <div class="column is-half">
+                  <div class="columns is-multiline">
+                    <div class="column is-full">
+                      <nav class="level">
+                        <div class="level-item has-text-centered">
+                          <div>
+                            <p class="heading">Días disponibles</p>
+                            <p class="title">{{ availableDays.cantidad || 0 }}</p>
+                          </div>
                         </div>
-                      </div>
-                    </nav>
-                  </div>
-                  <div class="column is-full">
-                    <nav class="level">
-                      <div class="level-item has-text-centered">
-                        <div>
-                          <p class="heading">Días solicitados</p>
-                          <p class="title">{{ requestedDays }}</p>
+                      </nav>
+                    </div>
+                    <div class="column is-full">
+                      <nav class="level">
+                        <div class="level-item has-text-centered">
+                          <div>
+                            <p class="heading">Días solicitados</p>
+                            <p class="title">{{ requestedDays }}</p>
+                          </div>
                         </div>
-                      </div>
-                    </nav>
-                  </div>
-                  <div class="column is-full">
-                    <nav class="level">
-                      <div class="level-item has-text-centered">
-                        <div>
-                          <p class="heading">Días disponibles despúes de la solicitud</p>
-                          <p class="title">{{ newAvailableDays }}</p>
+                      </nav>
+                    </div>
+                    <div class="column is-full">
+                      <nav class="level">
+                        <div class="level-item has-text-centered">
+                          <div>
+                            <p class="heading">Días disponibles despúes de la solicitud</p>
+                            <p class="title">{{ newAvailableDays }}</p>
+                          </div>
                         </div>
-                      </div>
-                    </nav>
+                      </nav>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-half">
-                <b-field :message="errors" :type="{ 'is-danger': errors[0] }">
-                  <b-datepicker v-model="dates" :day-names="dayNames" :month-names="monthNames" range inline />
-                </b-field>
-              </ValidationProvider>
+                <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-half">
+                  <b-field :message="errors" :type="{ 'is-danger': errors[0] }">
+                    <b-datepicker
+                      v-model="dates"
+                      :day-names="dayNames"
+                      :month-names="monthNames"
+                      :min-date="new Date()"
+                      range
+                      inline
+                    />
+                  </b-field>
+                </ValidationProvider>
 
-              <div class="column is-full">
-                <b-button
-                  type="is-primary"
-                  @click="
-                    solicitar();
-                    reset();
-                  "
-                  :disabled="invalid"
-                  expanded
-                  >Solicitar vacaciones</b-button
-                >
-              </div>
-            </ValidationObserver>
+                <div class="column is-full">
+                  <b-button
+                    type="is-primary"
+                    @click="
+                      solicitar();
+                      reset();
+                    "
+                    :disabled="invalid"
+                    expanded
+                    >Solicitar vacaciones</b-button
+                  >
+                </div>
+              </ValidationObserver>
+            </div>
           </div>
         </div>
       </div>
@@ -68,6 +78,7 @@
 </template>
 
 <script>
+import Navbar from '@/components/Navbar.vue';
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import Service from '@/services/AdisjService.js';
 import { differenceInBusinessDays, format } from 'date-fns';
@@ -75,6 +86,7 @@ import { differenceInBusinessDays, format } from 'date-fns';
 export default {
   name: 'VacationCreate',
   components: {
+    Navbar,
     ValidationProvider,
     ValidationObserver,
   },

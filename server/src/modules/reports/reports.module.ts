@@ -15,7 +15,7 @@ export class ReportsModule {
 
   private setRoutes() {
     this.router.post('/salary', this.controller.generateSalaryReport);
-    // this.router.get('/reprimands', this.controller.myInfo);
+    this.router.post('/quality', this.controller.generateQualityReport);
     // this.router.get('/tasks', this.controller.myInfo);
   }
 }

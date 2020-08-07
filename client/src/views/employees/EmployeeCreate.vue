@@ -1,43 +1,47 @@
 <template>
-  <div class="container">
-    <b-loading :is-full-page="true" :active.sync="isLoading"></b-loading>
-    <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="mt-10">
-      <div class="card">
-        <div class="card-content">
-          <div class="columns">
-            <div class="column">
-              <EmployeeBasic @basic-data="setBasic" />
-            </div>
-            <div class="column">
-              <EmployeeCredentials @credentials-data="setCredentials" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card mt-10 mb-10">
-        <div class="card-content">
-          <div class="columns">
-            <div class="column">
-              <EmployeeContact @contact-data="setContact" />
-            </div>
-            <div class="column">
-              <EmployeeCreateLabour @labour-data="setLabour" />
+  <div>
+    <Navbar />
+    <div class="container">
+      <b-loading :is-full-page="true" :active.sync="isLoading"></b-loading>
+      <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="mt-10">
+        <div class="card">
+          <div class="card-content">
+            <div class="columns">
+              <div class="column">
+                <EmployeeBasic @basic-data="setBasic" />
+              </div>
+              <div class="column">
+                <EmployeeCredentials @credentials-data="setCredentials" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="columns">
-        <div class="column">
-          <button class="button is-primary is-pulled-right" @click="saveEmployee" :disabled="invalid">
-            Guardar empleado
-          </button>
+        <div class="card mt-10 mb-10">
+          <div class="card-content">
+            <div class="columns">
+              <div class="column">
+                <EmployeeContact @contact-data="setContact" />
+              </div>
+              <div class="column">
+                <EmployeeCreateLabour @labour-data="setLabour" />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </ValidationObserver>
+        <div class="columns">
+          <div class="column">
+            <button class="button is-primary is-pulled-right" @click="saveEmployee" :disabled="invalid">
+              Guardar empleado
+            </button>
+          </div>
+        </div>
+      </ValidationObserver>
+    </div>
   </div>
 </template>
 
 <script>
+import Navbar from '@/components/Navbar.vue';
 import EmployeeBasic from '@/components/employee/EmployeeCreateBasic.vue';
 import EmployeeContact from '@/components/employee/EmployeeCreateContact.vue';
 import EmployeeCredentials from '@/components/employee/EmployeeCreateCredentials.vue';
@@ -49,6 +53,7 @@ import Service from '@/services/AdisjService.js';
 export default {
   name: 'EmployeeCreate',
   components: {
+    Navbar,
     EmployeeBasic,
     EmployeeContact,
     EmployeeCredentials,

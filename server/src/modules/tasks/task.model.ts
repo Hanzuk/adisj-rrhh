@@ -5,4 +5,5 @@ export interface Task {
   readonly descripcion?: string;
   readonly activo?: boolean;
   readonly fecha_asignacion?: Date;
+  readonly transporte?: boolean;
 }

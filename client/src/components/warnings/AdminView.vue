@@ -22,12 +22,17 @@
               </ValidationProvider>
 
               <ValidationProvider
-                :rules="{ required: true, alpha_spaces: /^[a-zA-Z0-9 .,]*$/ }"
-                v-slot="{ errors }"
+                :rules="{ required: true, alpha_spaces: /^[a-zA-Z\sñáéíóú]*$/ }"
+                v-slot="{ errors, valid }"
                 tag="div"
                 class="column is-full"
               >
-                <b-field label="Motivo" :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
+                <b-field
+                  label="Motivo"
+                  :message="errors"
+                  :type="{ 'is-danger': errors[0], 'is-success': valid }"
+                  expanded
+                >
                   <b-input v-model="reason"></b-input>
                 </b-field>
               </ValidationProvider>
@@ -43,6 +48,10 @@
                   expanded
                   >Aplicar amonestación</b-button
                 >
+              </div>
+              <div class="column is-full"></div>
+              <div class="column is-full">
+                <b-button type="is-info" @click="genReport" expanded>Generar</b-button>
               </div>
             </ValidationObserver>
           </div>
@@ -73,6 +82,17 @@
                 <b-table-column label="Fecha" field="fecha" width="120" sortable centered>
                   <b-tag type="is-light">{{ formatDate(props.row.fecha) }}</b-tag>
                 </b-table-column>
+              </template>
+
+              <template slot="empty">
+                <section class="section">
+                  <div class="content has-text-grey has-text-centered">
+                    <p>
+                      <b-icon icon="emoticon-sad" size="is-large"> </b-icon>
+                    </p>
+                    <p>No se han aplicado amonestaciones.</p>
+                  </div>
+                </section>
               </template>
             </b-table>
           </div>
@@ -131,20 +151,33 @@ export default {
         const { data } = await Service.getWarnings();
         this.warnings = data;
 
-        this.nombre = '';
-        this.amount = '';
+        this.reason = '';
 
         this.$buefy.toast.open({
-          duration: 2000,
-          message: 'Amonestacion registrada.',
+          duration: 2500,
+          message: 'Amonestación registrada',
           type: 'is-success',
         });
       } catch (error) {
         this.$buefy.toast.open({
-          duration: 2000,
-          message: 'No se pudo registrar la amonestacion.',
+          duration: 2500,
+          message: 'No se pudo registrar la amonestación',
           type: 'is-danger',
         });
+      }
+    },
+    async genReport() {
+      try {
+        const { data } = await Service.genQualityReport();
+
+        const fileURL = window.URL.createObjectURL(new Blob([data], { type: 'application/pdf' }));
+        const fileLink = document.createElement('a');
+        fileLink.href = fileURL;
+        fileLink.setAttribute('download', 'REPORTE-AMONESTACIONES-FELICITACIONES.pdf');
+        document.body.appendChild(fileLink);
+        fileLink.click();
+      } catch (error) {
+        console.log(error);
       }
     },
   },

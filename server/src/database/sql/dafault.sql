@@ -598,7 +598,7 @@ INSERT INTO direcciones (id_empleado, codigo_provincia, codigo_canton, codigo_di
 VALUES (1, 1, 104, 10403, 'Por la plaza primera calle a mano izquieda casa blanca a la derecha a 200 mts', 1);
 
 INSERT INTO salarios (id_empleado, salario_hora, jornada, activo)
-VALUES (1, 920.72, 8, 1);
+VALUES (1, 100.72, 8, 1);
 
 -- Nuevo chofer
 INSERT INTO empleados (cedula, nombre, p_apellido, s_apellido, fecha_nacimiento, correo, clave, activo, tipo_empleado, fecha_contrato)
@@ -614,4 +614,4 @@ INSERT INTO salarios (id_empleado, salario_hora, jornada, activo)
 VALUES (2, 1621.47, 8, 1);
 
 INSERT INTO vacaciones_disponibles (id_empleado, cantidad)
-VALUES (2, 120);
+VALUES (2, 125);

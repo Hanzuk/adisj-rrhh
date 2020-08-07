@@ -1,5 +1,5 @@
 <template>
-  <b-navbar wrapper-class="container" :shadow="true" :fixed-top="true">
+  <b-navbar wrapper-class="container" :shadow="true" :fixed-top="false">
     <template slot="brand">
       <b-navbar-item tag="router-link" :to="{ name: 'dashboard' }">
         <img src="../assets/logo_adisj.jpg" alt="Asociación de Desarrollo Integral de San Juan Puriscal" />
@@ -24,7 +24,6 @@
         <b-navbar-item tag="router-link" :to="{ name: 'overtime' }">Ver horas extras</b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Planilla" v-if="user.tipo_empleado == 1 || user.tipo_empleado == 2">
-        <b-navbar-item tag="router-link" :to="{ name: 'payroll' }">Cálculo salarial</b-navbar-item>
         <b-navbar-item tag="router-link" :to="{ name: 'increases' }" v-if="user.tipo_empleado == 1"
           >Aumentos salariales</b-navbar-item
         >
@@ -37,6 +36,7 @@
         <b-navbar-item tag="router-link" :to="{ name: 'travelExp' }" v-if="user.tipo_empleado == 1"
           >Viáticos</b-navbar-item
         >
+        <b-navbar-item tag="router-link" :to="{ name: 'payroll' }">Cálculo salarial</b-navbar-item>
       </b-navbar-dropdown>
       <b-navbar-dropdown label="Control disciplinario">
         <b-navbar-item tag="router-link" :to="{ name: 'quality-control' }" v-if="user.tipo_empleado == 1"

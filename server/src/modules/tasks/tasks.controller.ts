@@ -61,7 +61,7 @@ export class TasksController {
       }
 
       await this.taskBusiness.insertTaskDriver(
-        { id_empleado: parseInt(userId), titulo, descripcion },
+        { id_empleado: parseInt(userId), titulo, descripcion, transporte: true },
         driverTask,
         asignacion_chofer.dias
       );

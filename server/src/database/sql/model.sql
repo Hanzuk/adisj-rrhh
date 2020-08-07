@@ -196,7 +196,7 @@ CREATE TABLE tareas (
   descripcion VARCHAR(200) NOT NULL,
   activo BOOLEAN DEFAULT true NOT NULL,
   fecha_asignacion DATETIME DEFAULT NOW() NOT NULL,
-  -- asignacion_chofer TINYINT NOT NULL,
+  transporte BOOLEAN DEFAULT false NOT NULL,
   CONSTRAINT pk_tareas PRIMARY KEY(id),
   CONSTRAINT fk_tareas_id_empleado FOREIGN KEY(id_empleado) REFERENCES empleados(id)
   -- CONSTRAINT fk_tareas_asignacion_chofer FOREIGN KEY(asignacion_chofer) REFERENCES asignaciones_choferes(id)

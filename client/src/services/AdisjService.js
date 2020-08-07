@@ -155,6 +155,9 @@ export default {
   genSalReport(data) {
     return api.post(`/reports/salary`, data);
   },
+  genQualityReport() {
+    return api.post(`/reports/quality`);
+  },
   putEmployee(employeeId, data) {
     return api.put(`/users/${employeeId}`, data);
   },

@@ -42,7 +42,7 @@
 
     <div class="columns">
       <ValidationProvider
-        :rules="{ required: true, address: /^[a-zA-Z0-9 .,]*$/ }"
+        :rules="{ required: true, address: /^[a-zA-Z0-9\s.,ñáéíóú]*$/ }"
         v-slot="{ errors, valid }"
         tag="div"
         class="column"

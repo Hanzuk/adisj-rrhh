@@ -1,6 +1,11 @@
 import { ReportsRepository } from './reports.repository';
 import { initReportBuild } from '../../utils/reports';
 import numeral from 'numeral';
+import TimesBold from 'pdfjs/font/Times-Bold';
+import { format, lightFormat } from 'date-fns';
+import es from 'date-fns/locale/es';
+import { WagesBusiness } from '../wages/wages.business';
+
 numeral.locale('cr');
 
 numeral.register('locale', 'cr', {
@@ -21,11 +26,6 @@ numeral.register('locale', 'cr', {
     symbol: '₡ ',
   },
 });
-
-import TimesBold from 'pdfjs/font/Times-Bold';
-import { format } from 'date-fns';
-import es from 'date-fns/locale/es';
-import { WagesBusiness } from '../wages/wages.business';
 
 export class ReportsBusiness {
   constructor(private repository = new ReportsRepository(), private salaryRepo = new WagesBusiness()) {}
@@ -82,7 +82,7 @@ export class ReportsBusiness {
       rentas += item.impuesto_renta;
       deducciones += item.total_deduccion;
       netos += item.salario_neto;
-      aguinaldos += item.aguinaldo;
+      aguinaldos += item.salario_bruto / 12;
 
       const tr = table.row({ fontSize: 10 });
       tr.cell(item.empleado);
@@ -91,7 +91,7 @@ export class ReportsBusiness {
       tr.cell(`${numeral(item.impuesto_renta).format('0,0.00')}`, { textAlign: 'right' });
       tr.cell(`${numeral(item.total_deduccion).format('0,0.00')}`, { textAlign: 'right' });
       tr.cell(`${numeral(item.salario_neto).format('0,0.00')}`, { textAlign: 'right' });
-      tr.cell(`${numeral(item.aguinaldo).format('0,0.00')}`, { textAlign: 'right' });
+      tr.cell(`${numeral(item.salario_bruto / 12).format('0,0.00')}`, { textAlign: 'right' });
     }
 
     const totalCell = report.cell({ paddingTop: 15 });
@@ -131,6 +131,73 @@ export class ReportsBusiness {
         tr.cell(`${numeral(item.total_deduccion_especial).format('0,0.00')}`, { textAlign: 'right' });
         tr.cell(`${numeral(item.salario_especial_chofer).format('0,0.00')}`, { textAlign: 'right' });
       }
+    }
+
+    await report.end();
+
+    return { filename, path };
+  }
+
+  public async generateQualityPDF() {
+    const quality = await this.repository.getQualityData();
+
+    const { report, filename, path } = initReportBuild('control-calidad');
+
+    const currentMonth = format(new Date(), 'MMMM yyyy', { locale: es });
+    const cell = report.cell({ paddingBottom: 15 });
+    cell
+      .text(
+        `Felicitaciones y amonestaciones para el mes de ${
+          currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)
+        }`,
+        {
+          fontSize: 13,
+        }
+      )
+      .br();
+    cell.text('Felicitaciones registradas', { font: TimesBold, fontSize: 13 });
+
+    const table = report.table({
+      widths: ['*', '*', '*'],
+      padding: 5,
+      borderHorizontalWidths: (i) => {
+        return i < 2 ? 1 : 0.1;
+      },
+    });
+
+    const th = table.header({ font: TimesBold, fontSize: 11 });
+    th.cell('Empleado');
+    th.cell('Motivo de la felicitacion');
+    th.cell('Fecha de registro');
+
+    for (const item of quality.felicitaciones) {
+      const tr = table.row({ fontSize: 10 });
+      tr.cell(item.nombre);
+      tr.cell(`${item.descripcion}`);
+      tr.cell(`${lightFormat(new Date(item.fecha), 'dd-MM-yyyy')}`, { textAlign: 'right' });
+    }
+
+    const totalCell = report.cell({ paddingTop: 15 });
+    totalCell.cell().text(`Amonestaciones registradas`, { font: TimesBold, fontSize: 13 }).br();
+
+    const specialtable = report.table({
+      widths: ['*', '*', '*'],
+      padding: 5,
+      borderHorizontalWidths: (i) => {
+        return i < 2 ? 1 : 0.1;
+      },
+    });
+
+    const th2 = specialtable.header({ font: TimesBold, fontSize: 11 });
+    th2.cell('Empleado');
+    th2.cell('Motivo de la amonestacion');
+    th2.cell('Fecha de registro');
+
+    for (const item of quality.amonestaciones) {
+      const tr = specialtable.row({ fontSize: 10 });
+      tr.cell(item.nombre);
+      tr.cell(`${item.descripcion}`);
+      tr.cell(`${lightFormat(new Date(item.fecha), 'dd-MM-yyyy')}`, { textAlign: 'right' });
     }
 
     await report.end();

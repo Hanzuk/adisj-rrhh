@@ -1,26 +1,32 @@
 <template>
   <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="h-full columns is-centered is-vcentered">
-    <div class="column is-one-quarter">
-      <div class="columns is-multiline">
-        <div class="column is-full">
-          <h1 class="title has-text-centered">Inicio de sesión</h1>
-        </div>
-        <div class="column is-full">
-          <ValidationProvider rules="required" v-slot="{ errors }" tag="div">
-            <b-field label="Correo electrónico" :message="errors" :type="{ 'is-danger': errors[0] }">
-              <b-input v-model="email"></b-input>
-            </b-field>
-          </ValidationProvider>
-        </div>
-        <div class="column is-full">
-          <ValidationProvider rules="required" v-slot="{ errors }" tag="div">
-            <b-field label="Contraseña" :message="errors" :type="{ 'is-danger': errors[0] }">
-              <b-input type="password" v-model="password" password-reveal></b-input>
-            </b-field>
-          </ValidationProvider>
-        </div>
-        <div class="column is-full">
-          <b-button type="is-primary" @click="login" :disabled="invalid" expanded>Iniciar sesión</b-button>
+    <div class="column is-one-third">
+      <div class="box">
+        <div class="columns is-multiline">
+          <div class="column is-full">
+            <h1 class="title has-text-centered mb-5">Inicio de sesión</h1>
+          </div>
+          <div class="column is-full">
+            <ValidationProvider
+              :rules="{ required: true, myEmail: /^\S[a-z0-9_]+@[\w]+(\.\w{2,3}|\.\w{2,3}\.\w{2,3})$/ }"
+              v-slot="{ errors }"
+              tag="div"
+            >
+              <b-field label="Correo electrónico" :message="errors" :type="{ 'is-danger': errors[0] }">
+                <b-input v-model="email"></b-input>
+              </b-field>
+            </ValidationProvider>
+          </div>
+          <div class="column is-full">
+            <ValidationProvider rules="required" v-slot="{ errors }" tag="div">
+              <b-field label="Contraseña" :message="errors" :type="{ 'is-danger': errors[0] }">
+                <b-input type="password" v-model="password" password-reveal></b-input>
+              </b-field>
+            </ValidationProvider>
+          </div>
+          <div class="column is-full">
+            <b-button type="is-primary" @click="login" :disabled="invalid" expanded>Iniciar sesión</b-button>
+          </div>
         </div>
       </div>
     </div>

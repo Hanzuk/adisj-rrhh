@@ -1,93 +1,120 @@
 <template>
-  <div class="mt-10">
-    <div class="container">
-      <div class="columns is-multiline">
-        <div class="column is-3">
-          <div class="box">
-            <h5 class="title is-5">Nueva retención salarial</h5>
-            <ValidationObserver ref="observer" v-slot="{ invalid }" tag="div" class="columns is-multiline">
-              <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-full">
-                <b-field label="Empleado" :message="errors" :type="{ 'is-danger': errors[0] }">
-                  <b-autocomplete
-                    v-model="nombre"
-                    :data="filteredDataArray"
-                    :open-on-focus="true"
-                    dropdown-position="bottom"
-                    field="nombre_completo"
-                    @select="option => (selectedEmployee = option)"
-                    placeholder="Buscar empleado"
-                  >
-                  </b-autocomplete>
-                </b-field>
-              </ValidationProvider>
+  <div>
+    <Navbar />
+    <div class="mt-10">
+      <div class="container">
+        <div class="columns is-multiline">
+          <div class="column is-3">
+            <div class="box">
+              <h5 class="title is-5">Nueva retención salarial</h5>
+              <ValidationObserver ref="observer" v-slot="{ invalid, reset }" tag="div" class="columns is-multiline">
+                <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-full">
+                  <b-field label="Empleado" :message="errors" :type="{ 'is-danger': errors[0] }">
+                    <b-autocomplete
+                      v-model="nombre"
+                      :data="filteredDataArray"
+                      :open-on-focus="true"
+                      dropdown-position="bottom"
+                      field="nombre_completo"
+                      @select="option => (selectedEmployee = option)"
+                      placeholder="Buscar empleado"
+                    >
+                    </b-autocomplete>
+                  </b-field>
+                </ValidationProvider>
 
-              <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-full">
-                <b-field label="Motivo" :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
-                  <b-input v-model="reason"></b-input>
-                </b-field>
-              </ValidationProvider>
-
-              <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-8">
-                <b-field label="Monto a retener" :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
-                  <b-input
-                    v-model="amount"
-                    @input.native="setRawAmount"
-                    placeholder="₡ 0.00"
-                    v-cleave="masks.numeral"
-                  ></b-input>
-                </b-field>
-              </ValidationProvider>
-
-              <div class="column is-full">
-                <b-button type="is-primary" @click="applyRetention" :disabled="invalid" expanded
-                  >Aplicar retención</b-button
+                <ValidationProvider
+                  :rules="{ required: true, alpha_spaces: /^[a-zA-Z\sñáéíóú]*$/ }"
+                  v-slot="{ errors, valid }"
+                  tag="div"
+                  class="column is-full"
                 >
-              </div>
-            </ValidationObserver>
-            {{ selectedEmployee }}
+                  <b-field
+                    label="Motivo"
+                    :message="errors"
+                    :type="{ 'is-danger': errors[0], 'is-success': valid }"
+                    expanded
+                  >
+                    <b-input v-model="reason"></b-input>
+                  </b-field>
+                </ValidationProvider>
+
+                <ValidationProvider rules="required" v-slot="{ errors, valid }" tag="div" class="column is-8">
+                  <b-field
+                    label="Monto a retener"
+                    :message="errors"
+                    :type="{ 'is-danger': errors[0], 'is-success': valid }"
+                    expanded
+                  >
+                    <b-input
+                      v-model="amount"
+                      @input.native="setRawAmount"
+                      placeholder="₡ 0.00"
+                      v-cleave="masks.numeral"
+                    ></b-input>
+                  </b-field>
+                </ValidationProvider>
+
+                <div class="column is-full">
+                  <b-button type="is-primary" @click="applyRetention(), reset()" :disabled="invalid" expanded
+                    >Aplicar retención</b-button
+                  >
+                </div>
+              </ValidationObserver>
+            </div>
           </div>
-        </div>
 
-        <div class="column is-9">
-          <div class="box">
-            <h5 class="title is-5">Retenciones aplicadas</h5>
-            <b-table
-              :data="retentions"
-              :narrowed="true"
-              :paginated="true"
-              :per-page="4"
-              :bordered="true"
-              default-sort-direction="desc"
-              default-sort="fecha"
-              height="294"
-            >
-              <template slot-scope="props">
-                <b-table-column label="Empleado" field="nombre" :searchable="true" width="170">
-                  {{ props.row.nombre }}
-                </b-table-column>
+          <div class="column is-9">
+            <div class="box">
+              <h5 class="title is-5">Retenciones aplicadas</h5>
+              <b-table
+                :data="retentions"
+                :narrowed="true"
+                :paginated="true"
+                :per-page="4"
+                default-sort-direction="desc"
+                default-sort="fecha"
+                height="294"
+              >
+                <template slot-scope="props">
+                  <b-table-column label="Empleado" field="nombre" :searchable="true" width="170">
+                    {{ props.row.nombre }}
+                  </b-table-column>
 
-                <b-table-column label="Apellido" field="p_apellido" :searchable="true" width="150">
-                  {{ props.row.p_apellido }}
-                </b-table-column>
+                  <b-table-column label="Apellido" field="p_apellido" :searchable="true" width="150">
+                    {{ props.row.p_apellido }}
+                  </b-table-column>
 
-                <b-table-column label="Monto" centered>
-                  {{ formatAmount(props.row.retencion) }}
-                </b-table-column>
+                  <b-table-column label="Monto" centered>
+                    {{ formatAmount(props.row.retencion) }}
+                  </b-table-column>
 
-                <b-table-column label="Motivo">
-                  {{ props.row.descripcion }}
-                </b-table-column>
+                  <b-table-column label="Motivo">
+                    {{ props.row.descripcion }}
+                  </b-table-column>
 
-                <b-table-column label="Fecha" field="fecha" sortable centered>
-                  <span class="tag is-success">
-                    {{ new Date(props.row.fecha).toLocaleDateString() }}
-                  </span>
-                </b-table-column>
-                <b-table-column label="Acciones" centered>
-                  <b-button @click="removeRetention(props.row.id)" type="is-danger" icon-right="delete" />
-                </b-table-column>
-              </template>
-            </b-table>
+                  <b-table-column label="Fecha" field="fecha" sortable centered>
+                    <span class="tag is-success">
+                      {{ new Date(props.row.fecha).toLocaleDateString() }}
+                    </span>
+                  </b-table-column>
+                  <b-table-column label="Eliminar" centered>
+                    <b-button @click="removeRetention(props.row.id)" type="is-danger" icon-right="delete" />
+                  </b-table-column>
+                </template>
+
+                <template slot="empty">
+                  <section class="section">
+                    <div class="content has-text-grey has-text-centered">
+                      <p>
+                        <b-icon icon="emoticon-sad" size="is-large"> </b-icon>
+                      </p>
+                      <p>No se han aplicado retenciones salariales.</p>
+                    </div>
+                  </section>
+                </template>
+              </b-table>
+            </div>
           </div>
         </div>
       </div>
@@ -96,6 +123,7 @@
 </template>
 
 <script>
+import Navbar from '@/components/Navbar.vue';
 import { mapGetters } from 'vuex';
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import Service from '@/services/AdisjService.js';
@@ -106,6 +134,7 @@ const precision = Math.pow(10, 2);
 export default {
   name: 'Withholding',
   components: {
+    Navbar,
     ValidationObserver,
     ValidationProvider,
   },
@@ -155,17 +184,21 @@ export default {
             reason: this.reason,
           })
         );
+
+        this.reason = '';
+        this.amount = '';
+
         const { data } = await Service.getRetentions();
         this.retentions = data;
         this.$buefy.toast.open({
-          duration: 2000,
-          message: 'Retencion aplicada.',
+          duration: 2500,
+          message: 'Retención aplicada',
           type: 'is-success',
         });
       } catch (error) {
         this.$buefy.toast.open({
-          duration: 2000,
-          message: 'No se pudo aplicar la retencion.',
+          duration: 2500,
+          message: 'No se pudo aplicar la retención',
           type: 'is-danger',
         });
       }

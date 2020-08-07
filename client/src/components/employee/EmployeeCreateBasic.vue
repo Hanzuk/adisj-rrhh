@@ -20,7 +20,7 @@
       </ValidationProvider>
 
       <ValidationProvider
-        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\s]*$/ }"
+        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\sñáéíóú]*$/ }"
         v-slot="{ errors, valid }"
         tag="div"
         class="column"
@@ -32,7 +32,7 @@
     </div>
     <div class="columns">
       <ValidationProvider
-        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\s]*$/ }"
+        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\sñáéíóú]*$/ }"
         v-slot="{ errors, valid }"
         tag="div"
         class="column"
@@ -51,7 +51,7 @@
       </ValidationProvider>
 
       <ValidationProvider
-        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\s]*$/ }"
+        :rules="{ required: true, alpha_spaces: /^[a-zA-Z\sñáéíóú]*$/ }"
         v-slot="{ errors, valid }"
         tag="div"
         class="column"
@@ -77,6 +77,8 @@
             :day-names="dayNames"
             :month-names="monthNames"
             :first-day-of-week="1"
+            :max-date="new Date('2002-12-31')"
+            :years-range="[-50, 100]"
             :date-formatter="date => date.toLocaleDateString('es-CR')"
             placeholder="Seleccionar fecha..."
             @input.native="sendDataToParent"

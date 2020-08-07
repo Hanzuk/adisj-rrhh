@@ -22,18 +22,28 @@
               </ValidationProvider>
 
               <ValidationProvider
-                :rules="{ required: true, alpha_spaces: /^[a-zA-Z .,]*$/ }"
-                v-slot="{ errors }"
+                :rules="{ required: true, alpha_spaces: /^[a-zA-Z\sñáéíóú]*$/ }"
+                v-slot="{ errors, valid }"
                 tag="div"
                 class="column is-full"
               >
-                <b-field label="Motivo" :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
+                <b-field
+                  label="Motivo"
+                  :message="errors"
+                  :type="{ 'is-danger': errors[0], 'is-success': valid }"
+                  expanded
+                >
                   <b-input v-model="reason"></b-input>
                 </b-field>
               </ValidationProvider>
 
-              <ValidationProvider rules="required" v-slot="{ errors }" tag="div" class="column is-8">
-                <b-field label="Monto" :message="errors" :type="{ 'is-danger': errors[0] }" expanded>
+              <ValidationProvider rules="required" v-slot="{ errors, valid }" tag="div" class="column is-8">
+                <b-field
+                  label="Monto"
+                  :message="errors"
+                  :type="{ 'is-danger': errors[0], 'is-success': valid }"
+                  expanded
+                >
                   <b-input
                     v-model="amount"
                     @input.native="setRawAmount"
@@ -96,6 +106,17 @@
                 <b-table-column label="Eliminar" centered>
                   <b-button type="is-danger" icon-right="delete" @click="borrar(props.row.id)" />
                 </b-table-column>
+              </template>
+
+              <template slot="empty">
+                <section class="section">
+                  <div class="content has-text-grey has-text-centered">
+                    <p>
+                      <b-icon icon="emoticon-sad" size="is-large"> </b-icon>
+                    </p>
+                    <p>No se han otorgado viáticos.</p>
+                  </div>
+                </section>
               </template>
             </b-table>
           </div>
@@ -173,19 +194,18 @@ export default {
         const { data } = await Service.getViaticos();
         this.viaticos = data;
 
-        this.nombre = '';
         this.reason = '';
         this.amount = '';
 
         this.$buefy.toast.open({
           duration: 2500,
-          message: 'Viáticos otorgados con exito.',
+          message: 'Viáticos otorgados con éxito',
           type: 'is-success',
         });
       } catch (error) {
         this.$buefy.toast.open({
           duration: 2500,
-          message: 'No se pudo otorgar los viaticos.',
+          message: 'No se pudieron otorgar los viáticos',
           type: 'is-danger',
         });
       }

@@ -11,7 +11,7 @@
       <p class="has-text-grey leading-none">Hace {{ createdAgo(task.fecha_asignacion) }}</p>
     </div>
     <footer class="card-footer">
-      <a class="card-footer-item" @click="openTaskModal(task.id)">Mas información</a>
+      <a class="card-footer-item" v-if="task.transporte" @click="openTaskModal(task.id)">Mas información</a>
       <a class="card-footer-item" v-if="userType === 1" @click="removeTask(task.id)">Eliminar tarea</a>
     </footer>
   </div>
@@ -53,13 +53,16 @@ export default {
 
             this.$buefy.toast.open({
               duration: 2500,
-              message: 'Tarea eliminada con éxito.',
+              message: 'Tarea eliminada con éxito',
               type: 'is-success',
             });
+
+            // const { data } = await Service.getTasks();
+            // this.tasks = data;
           } catch (error) {
             this.$buefy.toast.open({
               duration: 2500,
-              message: '¡Lo sentimos! La tarea no pudo ser eliminada.',
+              message: '¡Lo sentimos! La tarea no pudo ser eliminada',
               type: 'is-danger',
             });
           }
